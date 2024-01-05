@@ -1,8 +1,64 @@
 import { createStore } from 'vuex';
-
 const store = createStore({
   state() {
     return {
+      app: {
+        lastTimeCheck: '03/01/2024',
+        startDay:'20/12/2023'
+      },
+      dopamines: [
+        {
+          name: "Dopamines",
+          recordLastThinkDay: 0,
+          recordLastDoDay: 0,
+          actualLastThinkDay: 0,
+          actualLastDoDay: 0,
+          history: [
+            {
+              datetime: '05/01/2024',
+              thinkCount: 0,
+              doCount: 0,
+              lastThinkDay: 1,
+              lastDoDay: 3,
+            },
+            {
+              datetime: '04/01/2024',
+              thinkCount: 1,
+              doCount: 0,
+              lastThinkDay: 2,
+              lastDoDay: 0,
+            },
+            {
+              datetime: '02/01/2024',
+              thinkCount: 1,
+              doCount: 1,
+              lastThinkDay: 1,
+              lastDoDay: 8,
+            },
+            {
+              datetime: '01/01/2024',
+              thinkCount: 1,
+              doCount: 0,
+              lastThinkDay: 7,
+              lastDoDay: 0,
+            },
+            {
+              datetime: '25/12/2023',
+              thinkCount: 1,
+              doCount: 1,
+              lastThinkDay: 5,
+              lastDoDay: 5,
+            },
+            {
+              datetime: '20/12/2023',
+              thinkCount: 0,
+              doCount: 0,
+              lastThinkDay: 0,
+              lastDoDay: 0,
+            }
+          ]
+        }
+      ],
       memories: [
         {
           id: 'm1',

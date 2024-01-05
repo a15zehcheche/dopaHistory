@@ -3,6 +3,9 @@
         <div>{{fullDate}}</div>
         <div>{{ fullTime }}</div>
     </div>
+    <img  width="20px" src="@/assets/total.svg"/>
+    <img  width="20px" src="@/assets/chess-queen.svg"/>
+
   
 </template>
 <script>
