@@ -8,8 +8,7 @@
             {{ dayNames[dateNow.getDay()] }}
         </div>
     </div>
-    <img width="20px" src="@/assets/total.svg" />
-    <img width="20px" src="@/assets/chess-queen.svg" />
+   
 </template>
 <script>
 export default {

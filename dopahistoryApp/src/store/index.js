@@ -13,6 +13,7 @@ const store = createStore({
           recordLastDoDay: 0,
           actualLastThinkDay: 0,
           actualLastDoDay: 0,
+          days:1,
           history: [
             {
               datetime: '05/01/2024',
