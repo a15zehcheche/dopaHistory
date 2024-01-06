@@ -3,27 +3,17 @@
         <div class="item-layer cicle-layer">
             <div class="item-cicle-box">
                 <div class="item-cicle">
-                    <div><span class="dopa-think">1</span></div>
-                    <div><span class="dopa-do">2</span></div>
+                    <img width="30px" src="@/assets/flag-checkered.svg" />
                 </div>
                 <span class="item-date">01/01/2024</span>
             </div>
-
-            <div class="item-days">
-                <div><span class="dopa-think">1 days</span></div>
-                <div><span class="dopa-do">2 days</span></div>
-            </div>
         </div>
-        <div class="item-layer">
-            <div class="item-line"></div>
-        </div>
-
     </div>
 </template>
 <style scoped>
 .item-box {
     height: 100px;
-    width: 300px !important;
+    width: 60px !important;
     position: relative;
     flex-shrink: 0;
 }
@@ -66,23 +56,4 @@
     justify-content: space-around;
 }
 
-.item-days {
-    display: grid;
-    justify-content: center;
-}
-
-.item-days div:first-child {
-    margin-bottom: 5px;
-}
-
-.item-days div:last-child {
-    margin-top: 5px;
-}
-
-.item-line {
-    width: 100%;
-    height: 5px;
-    background-color: black;
-    z-index: 1;
-}
 </style>

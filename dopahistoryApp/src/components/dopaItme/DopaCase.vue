@@ -7,6 +7,7 @@
         <BetweenItem></BetweenItem>
         <BetweenItem></BetweenItem>
         <BetweenItem></BetweenItem>
+        <StartItme></StartItme>
     </div>
     <div class="dopa-info">
         <div class="totalCount">
@@ -22,9 +23,11 @@
 
 <script>
 import BetweenItem from './BetweenItem.vue';
+import StartItme from './StartItme.vue';
 export default {
     components: {
-        BetweenItem
+        BetweenItem,
+        StartItme
     }
 }
 </script>
@@ -50,7 +53,7 @@ export default {
     align-items: center;
     overflow: hidden;
     overflow-x: scroll;
-    
+    padding: 0 50px;
 }
 
 .dopa-info {
