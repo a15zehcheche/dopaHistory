@@ -4,10 +4,13 @@
         <span>10 day</span>
     </div>
     <div class="history-box">
-        <BetweenItem></BetweenItem>
-        <BetweenItem></BetweenItem>
-        <BetweenItem></BetweenItem>
-        <StartItme></StartItme>
+        <div class="item-content">
+            <BetweenItem></BetweenItem>
+            <BetweenItem></BetweenItem>
+            <BetweenItem></BetweenItem>
+            <StartItme></StartItme>
+        </div>
+
     </div>
     <div class="dopa-info">
         <div class="totalCount">
@@ -36,6 +39,7 @@ export default {
 .history-box::-webkit-scrollbar {
     display: none;
 }
+
 .dopa-title {
     display: flex;
     justify-content: space-between;
@@ -53,6 +57,10 @@ export default {
     align-items: center;
     overflow: hidden;
     overflow-x: scroll;
+}
+
+.item-content {
+    display: flex;
     padding: 0 50px;
 }
 
