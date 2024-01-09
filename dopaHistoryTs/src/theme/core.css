@@ -1,0 +1,11 @@
+ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+.dopa-do{
+  color: red;
+}
+.dopa-think{
+  color: orange;
+}
