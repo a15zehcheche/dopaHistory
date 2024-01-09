@@ -99,7 +99,32 @@ class StorageService implements IStorageService {
             throw new Error(`storageService.addUser: lastId not returned`);
         }
     }
-
+    //history sql
+    async getHistoryByDopamineId(id:number): Promise<History[]> {
+        const sql = `SELECT * FROM history WHERE id_dopamine=${id}`;
+        return (await this.db.query(sql)).values as History[];
+    }
+    async addHistory(history: History): Promise<number> {
+        const sql = `INSERT INTO history (id_dopamine,datetime) VALUES (?,?);`;
+        const res = await this.db.run(sql, [history.id_dopamine,history.dateTime]);
+        if (res.changes !== undefined
+            && res.changes.lastId !== undefined && res.changes.lastId > 0) {
+            return res.changes.lastId;
+        } else {
+            throw new Error(`storageService.addUser: lastId not returned`);
+        }
+    }
+    async updateHistoryById(history:History): Promise<void> {
+        const sql = `UPDATE history SET 
+        dateTime=${history.dateTime} 
+        doCount=${history.doCount} 
+        thinkCount=${history.thinkCount} 
+        lastDoDay=${history.lastDoDay} 
+        lastThinkDay=${history.lastThinkDay} 
+        WHERE id=${history.id}`;
+        await this.db.run(sql);
+    }
+    
 
 }
 export default StorageService;

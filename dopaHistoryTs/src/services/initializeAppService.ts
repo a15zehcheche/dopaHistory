@@ -33,7 +33,7 @@ class InitializeAppService implements IInitializeAppService  {
                 throw new Error(`initializeAppError.initializeApp: ${msg}`);
             }
         }
-        console.log(this.storageServ.getDatabaseVersion())
+        console.log('load db version ' + this.storageServ.getDatabaseVersion())
         console.log('jeep-sqlite init')
         return this.appInit;
     }

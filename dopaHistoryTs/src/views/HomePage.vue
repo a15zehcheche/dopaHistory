@@ -4,7 +4,7 @@
     <dopa-case v-for="dopamine in dopamines" :dopamine="dopamine"></dopa-case>
 
     <div class="action-btn-box">
-      <ion-button color="warning" @click="adduser">add user</ion-button>
+      <ion-button color="warning" @click="addhistory">add history</ion-button>
       <ion-button color="danger" @click="addDopamine">add dopamine</ion-button>
     </div>
     <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
@@ -33,7 +33,7 @@ import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 
 import AppDateTime from '../components/time/AppDateTime.vue';
 import DopaCase from '../components/dopaItme/DopaCase.vue'
-//new Date('2024-01-05T23:59:55'),
+//new Date('2024-01-15T23:59:55'),
 export default defineComponent({
   components: {
     AppDateTime,
@@ -58,7 +58,7 @@ export default defineComponent({
     addDopamine() {
       console.log('Add dopamine')
     },
-    adduser() {
+    addhistory() {
       let user: User
       user = {
         id: Date.now(),

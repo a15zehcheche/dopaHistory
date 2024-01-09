@@ -45,9 +45,7 @@ export default defineComponent({
             required: true
         }
     },
-    created() {
-        console.log(this.dopamine)
-    }
+
 
 })
 </script>
