@@ -1,14 +1,14 @@
 <template>
     <base-layout page-title="Home">
-        <app-date-time :dateNow="dateNow"></app-date-time>
+        <app-date-time :dateNow="this.dateNow"></app-date-time>
        
         <dopa-case></dopa-case>
         
     </base-layout>
 </template>
   
-<script>
-
+<script >
+import { ref } from 'vue'
 
 import AppDateTime from '../components/time/AppDateTime.vue';
 import DopaCase from '../components/dopaItme/DopaCase.vue'
