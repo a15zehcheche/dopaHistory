@@ -1,8 +1,8 @@
 <template>
     <base-layout page-title="Home">
-        <AppDateTime :dateNow="dateNow"></AppDateTime>
+        <app-date-time :dateNow="dateNow"></app-date-time>
        
-        <DopaCase></DopaCase>
+        <dopa-case></dopa-case>
         
     </base-layout>
 </template>
@@ -12,11 +12,13 @@
 
 import AppDateTime from '../components/time/AppDateTime.vue';
 import DopaCase from '../components/dopaItme/DopaCase.vue'
+import BaseLayout from '../components/base/BaseLayout.vue'
 //new Date('2024-01-05T23:59:55'),
 export default {
     components: {
         AppDateTime,
-        DopaCase
+        DopaCase,
+        BaseLayout
     },
     data() {
         return {
