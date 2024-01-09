@@ -33,6 +33,7 @@ class InitializeAppService implements IInitializeAppService  {
                 throw new Error(`initializeAppError.initializeApp: ${msg}`);
             }
         }
+        console.log('init jeep-sqlite')
         return this.appInit;
     }
 }
