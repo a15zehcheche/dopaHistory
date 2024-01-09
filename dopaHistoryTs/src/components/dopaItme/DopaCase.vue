@@ -8,18 +8,22 @@
             <BetweenItem></BetweenItem>
             <BetweenItem></BetweenItem>
             <BetweenItem></BetweenItem>
-            <StartItme></StartItme>
+            <StartItme :startDate="dopamine.startDate"></StartItme>
         </div>
 
     </div>
     <div class="dopa-info">
         <div class="totalCount">
             <img width="30px" src="@/assets/total.svg" />
-            <span class="dopa-do">3</span>&nbsp;-&nbsp;<span class="dopa-think">5</span>
+            <span class="dopa-do">{{ dopamine.allDoDayCount }}</span>
+            &nbsp;-&nbsp;
+            <span class="dopa-think">{{ dopamine.allThinkDayCount }}</span>
         </div>
         <div class="bestDaysCount">
             <img width="30px" src="@/assets/chess-queen.svg" />
-            <span class="dopa-do">3</span>&nbsp;-&nbsp;<span class="dopa-think">5</span>
+            <span class="dopa-do">{{ dopamine.recordBestDoDay }}</span>
+            &nbsp;-&nbsp;
+            <span class="dopa-think">{{ dopamine.recordBestThinkDay }}</span>
         </div>
     </div>
 </template>
@@ -27,12 +31,25 @@
 <script lang="ts">
 import BetweenItem from './BetweenItem.vue';
 import StartItme from './StartItme.vue';
-export default {
+import { defineComponent, ref } from 'vue'
+import { Dopamine } from '@/models/Dopamine';
+
+export default defineComponent({
     components: {
         BetweenItem,
         StartItme
+    },
+    props: {
+        dopamine: {
+            type: Object as () => Dopamine,
+            required: true
+        }
+    },
+    created() {
+        console.log(this.dopamine)
     }
-}
+
+})
 </script>
 
 <style scoped>
@@ -78,4 +95,5 @@ export default {
 .bestDaysCount {
     display: flex;
     align-items: center;
-}</style>
+}
+</style>

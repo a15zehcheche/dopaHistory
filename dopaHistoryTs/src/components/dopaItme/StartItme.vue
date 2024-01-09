@@ -5,11 +5,32 @@
                 <div class="item-cicle">
                     <img width="30px" src="@/assets/flag-checkered.svg" />
                 </div>
-                <span class="item-date">01/01/2024</span>
+                <span class="item-date">{{ dateToString }}</span>
             </div>
         </div>
     </div>
 </template>
+<script lang="ts">
+
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+
+    props: {
+        startDate:{
+            type:String,
+            required:true
+        }
+    },
+    computed:{
+        dateToString(){
+            let date =new Date(this.startDate)
+            return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+        }
+    }
+
+})
+</script>
 <style scoped>
 .item-box {
     height: 100px;
