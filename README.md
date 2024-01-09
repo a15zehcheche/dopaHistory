@@ -1,8 +1,13 @@
 # dopahistory
 
 ## install dependency packages
-> npm i
+```npm i```
 ## build project to production
-> npm rnu build
+```npm rnu build```
 ## run app to device
-> npx capacitor run androids
+```
+npx capacitor copy android
+npx capacitor run android
+```
+## open project in android studio
+```npx capacitor open androids```
