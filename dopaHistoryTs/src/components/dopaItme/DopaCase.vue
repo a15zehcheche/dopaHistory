@@ -1,13 +1,11 @@
 <template>
     <div class="dopa-title">
-        <span>Dopamine</span>
-        <span>10 day</span>
+        <span>{{ dopamine.name }}</span>
+        <span>{{ dopamine.daysCount }} day</span>
     </div>
     <div class="history-box">
         <div class="item-content">
-            <BetweenItem></BetweenItem>
-            <BetweenItem></BetweenItem>
-            <BetweenItem></BetweenItem>
+            <BetweenItem v-for="dopahistory in dopaHistorys" :dopaHistory="dopahistory"></BetweenItem>
             <StartItme :startDate="dopamine.startDate"></StartItme>
         </div>
 
@@ -28,26 +26,17 @@
     </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import BetweenItem from './BetweenItem.vue';
 import StartItme from './StartItme.vue';
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, Ref, watch,defineProps } from 'vue'
+import { SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { useQuerySQLite } from '@/hooks/UseQuerySQLite';
+
 import { Dopamine } from '@/models/Dopamine';
-
-export default defineComponent({
-    components: {
-        BetweenItem,
-        StartItme
-    },
-    props: {
-        dopamine: {
-            type: Object as () => Dopamine,
-            required: true
-        }
-    },
-
-
-})
+import { DopaHistory } from '@/models/DopaHistory';
+const props = defineProps(['dopamine','dopaHistorys'])
+console.log(props)
 </script>
 
 <style scoped>
@@ -62,14 +51,14 @@ export default defineComponent({
 }
 
 .history-box {
-    height: 150px;
+    height: 120px;
     width: 100%;
     box-sizing: border-box;
     border-color: black;
     border-style: solid;
     border-width: 1px 0;
     display: flex;
-    align-items: center;
+    /*align-items: center;*/
     overflow: hidden;
     overflow-x: scroll;
 }

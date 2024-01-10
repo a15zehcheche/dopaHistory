@@ -6,7 +6,7 @@ import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { UserUpgradeStatements } from '../upgrades/user.upgrade.statements';
 import { User } from '../models/User';
 import { Dopamine } from '../models/Dopamine'
-import { History } from '../models/History'
+import { DopaHistory } from '../models/DopaHistory'
 
 export interface IStorageService {
     initializeDatabase(): Promise<void>
@@ -104,7 +104,7 @@ class StorageService implements IStorageService {
         const sql = `SELECT * FROM history WHERE id_dopamine=${id}`;
         return (await this.db.query(sql)).values as History[];
     }
-    async addHistory(history: History): Promise<number> {
+    async addDopaHistory(history: DopaHistory): Promise<number> {
         const sql = `INSERT INTO history (id_dopamine,datetime) VALUES (?,?);`;
         const res = await this.db.run(sql, [history.id_dopamine,history.dateTime]);
         if (res.changes !== undefined
@@ -114,16 +114,18 @@ class StorageService implements IStorageService {
             throw new Error(`storageService.addUser: lastId not returned`);
         }
     }
-    async updateHistoryById(history:History): Promise<void> {
+    async updateHistoryById(history:DopaHistory): Promise<void> {
         const sql = `UPDATE history SET 
-        dateTime=${history.dateTime} 
-        doCount=${history.doCount} 
-        thinkCount=${history.thinkCount} 
-        lastDoDay=${history.lastDoDay} 
+        dateTime="${history.dateTime} ",
+        doCount=${history.doCount} ,
+        thinkCount=${history.thinkCount} ,
+        lastDoDay=${history.lastDoDay} ,
         lastThinkDay=${history.lastThinkDay} 
         WHERE id=${history.id}`;
+        //console.log(sql)
         await this.db.run(sql);
     }
+    
     
 
 }

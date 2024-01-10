@@ -22,8 +22,28 @@ export const UserUpgradeStatements = [
    {
     toVersion: 2,
     statements: [
-        `CREATE TABLE "dopamine" ( "id" INTEGER UNIQUE, "name" TEXT, "recordBestThinkDay" INTEGER DEFAULT 0, "recordBestDoDay" INTEGER DEFAULT 0, "allDoDayCount" INTEGER DEFAULT 0, "allThinkDayCount" INTEGER DEFAULT 0, "daysCount" INTEGER DEFAULT 0, "startDate" TEXT, PRIMARY KEY("id" AUTOINCREMENT) )`,
-        `CREATE TABLE "history" ( "id" INTEGER NOT NULL, "id_dopamine" INTEGER NOT NULL, "dateTime" TEXT, "lastDoDay" INTEGER, "lastThinkDay" INTEGER, "thinkCount" INTEGER, "doCount" INTEGER, FOREIGN KEY("id_dopamine") REFERENCES "dopamine"("id"), PRIMARY KEY("id" AUTOINCREMENT) )`
+        `CREATE TABLE "dopamine" (
+            "id"	INTEGER UNIQUE,
+            "name"	TEXT,
+            "recordBestThinkDay"	INTEGER DEFAULT 0,
+            "recordBestDoDay"	INTEGER DEFAULT 0,
+            "allDoDayCount"	INTEGER DEFAULT 0,
+            "allThinkDayCount"	INTEGER DEFAULT 0,
+            "daysCount"	INTEGER DEFAULT 0,
+            "startDate"	TEXT,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );`,
+        `CREATE TABLE "history" (
+            "id"	INTEGER NOT NULL,
+            "id_dopamine"	INTEGER NOT NULL,
+            "dateTime"	TEXT,
+            "lastDoDay"	INTEGER DEFAULT 0,
+            "lastThinkDay"	INTEGER DEFAULT 0,
+            "thinkCount"	INTEGER DEFAULT 0,
+            "doCount"	INTEGER DEFAULT 0,
+            PRIMARY KEY("id" AUTOINCREMENT),
+            FOREIGN KEY("id_dopamine") REFERENCES "dopamine"("id")
+        );`
     ]
 
     },

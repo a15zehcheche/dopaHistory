@@ -1,4 +1,4 @@
-export interface History {
+export interface DopaHistory {
     id: number
     id_dopamine: number
     dateTime: string

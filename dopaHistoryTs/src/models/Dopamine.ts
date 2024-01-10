@@ -1,3 +1,4 @@
+import { DopaHistory } from "./DopaHistory"
 export interface Dopamine {
     id: number
     name: string
@@ -7,5 +8,6 @@ export interface Dopamine {
     allThinkDayCount: number
     daysCount: number
     startDate: string
+    dopaHistorys?:DopaHistory
 }
 
