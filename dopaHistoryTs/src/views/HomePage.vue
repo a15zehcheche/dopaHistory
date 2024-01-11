@@ -143,33 +143,35 @@ const checkIsPassNextDay = async () => {
   let milliSecoundsReal = calRestMilliSecondsToNextDay()
   setDateIterval(milliSecoundsReal)
   //console.log("new day")
-  if (historyActive.doCount > 0 || historyActive.thinkCount > 0) {
-    //console.log('history active: ')
-    //console.log(historyActive)
-    //console.log(historyActive.doCount)
+  if (dateToString(new Date(historyActive.dateTime)) != dateToString(dateToday.value)) {
+    console.log('新的一天')
+    if (historyActive.doCount > 0 || historyActive.thinkCount > 0) {
+      console.log("Creat new Dopa History")
+      const newHistory = ref({
+        id: Date.now(),
+        id_dopamine: dopaCaseActive.value!.id,
+        dateTime: dateToString(dateToday.value),
+        lastDoDay: 0,
+        lastThinkDay: 0,
+        thinkCount: 0,
+        doCount: 0,
+      })
+      let lastId = await handleAddHistory(newHistory.value)
+      if (lastId != 0) {
+        newHistory.value.id = lastId
+        dopaCaseActive.value!.dopaHistorys!.unshift(newHistory.value);
+        historyActive = newHistory.value
+      }
 
-    console.log("Creat new Dopa History")
-    const newHistory =ref({
-      id: Date.now(),
-      id_dopamine: dopaCaseActive.value!.id,
-      dateTime: dateToString(dateToday.value),
-      lastDoDay: 0,
-      lastThinkDay: 0,
-      thinkCount: 0,
-      doCount: 0,
-    })
-    let lastId = await handleAddHistory(newHistory.value)
-    if(lastId!=0){
-      newHistory.value.id = lastId 
-      dopaCaseActive.value!.dopaHistorys!.unshift(newHistory.value);
-      historyActive = newHistory.value
+    } else {
+      historyActive.dateTime = dateToString(dateToday.value)
+      console.log('set history active date : ' + dateToString(dateToday.value))
+      handleUpdateDopaHistory(historyActive)
     }
-    
   }else{
-    historyActive.dateTime = dateToString(dateToday.value)
-    console.log('set history active date : ' + dateToString(dateToday.value))
-    handleUpdateDopaHistory(historyActive)
+    console.log("同一天只更新check intervar，不修改任何当前数据")
   }
+
   console.log('history actualizat set today date')
 
   //getHistoryByDopamineId(dopaCaseActive.value!.id)
@@ -225,12 +227,12 @@ const handleAddDopamine = async (newDopamine: Dopamine) => {
 
 
 //history ------------------------------------------
-const handleAddHistory = async (newHistory: DopaHistory):Promise<number>=> {
+const handleAddHistory = async (newHistory: DopaHistory): Promise<number> => {
   if (db.value) {
     const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
     const lastId = await storageServ.addDopaHistory(newHistory);
     //historyActive.id = lastId as number;
-   return lastId
+    return lastId
   }
   return 0
 };
