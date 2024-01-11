@@ -8,6 +8,6 @@ export interface Dopamine {
     allThinkDayCount: number
     daysCount: number
     startDate: string
-    dopaHistorys?:DopaHistory
+    dopaHistorys?:DopaHistory[]
 }
 

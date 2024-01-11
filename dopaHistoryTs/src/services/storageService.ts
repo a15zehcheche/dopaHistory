@@ -100,13 +100,22 @@ class StorageService implements IStorageService {
         }
     }
     //history sql
-    async getHistoryByDopamineId(id:number): Promise<History[]> {
-        const sql = `SELECT * FROM history WHERE id_dopamine=${id}`;
-        return (await this.db.query(sql)).values as History[];
+    async getHistoryByDopamineId(id:number): Promise<DopaHistory[]> {
+        const sql = `SELECT * FROM history WHERE id_dopamine=${id} ORDER by date(datetime) DESC`;
+        return (await this.db.query(sql)).values as DopaHistory[];
     }
-    async addDopaHistory(history: DopaHistory): Promise<number> {
-        const sql = `INSERT INTO history (id_dopamine,datetime) VALUES (?,?);`;
-        const res = await this.db.run(sql, [history.id_dopamine,history.dateTime]);
+    
+    async addDopaHistory(newHistory: DopaHistory): Promise<number> {
+        const sql = `INSERT INTO history (id_dopamine,datetime,doCount,thinkCount,lastDoDay,lastThinkDay) VALUES (${newHistory.id_dopamine},"${newHistory.dateTime}",${newHistory.doCount},${newHistory.thinkCount},${newHistory.lastDoDay},${newHistory.lastThinkDay});`;
+        console.log(sql)
+        const res = await this.db.run(sql/*, [
+            newHistory.id_dopamine,
+            newHistory.dateTime,
+            newHistory.doCount,
+            newHistory.thinkCount,
+            newHistory.lastDoDay,
+            newHistory.lastThinkDay
+        ]*/);
         if (res.changes !== undefined
             && res.changes.lastId !== undefined && res.changes.lastId > 0) {
             return res.changes.lastId;

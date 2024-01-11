@@ -1,11 +1,14 @@
 <template>
   <div class="main-body">
-    <app-date-time :dateNow="dateNow"></app-date-time>
-    <dopa-case v-for="dopamine in dopamines" :dopamine="dopamine" :dopaHistorys="dopaHistorys"></dopa-case>
+    <app-date-time :dateToday="dateToday"></app-date-time>
+    <dopa-case v-if="dopaCaseActive" :dopamine="dopaCaseActive"></dopa-case>
 
     <div class="action-btn-box">
       <ion-button color="danger" @click="dopaDo">Do</ion-button>
       <ion-button color="warning" @click="dopaThink">Think</ion-button>
+      <ion-button color="primary" @click="passNextday">next day</ion-button>
+      <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
+      <ion-button color="primary" @click="addHistory">add history</ion-button>
     </div>
     <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
   </div>
@@ -73,13 +76,13 @@ const openDatabase = async () => {
 
 /* app main logic------------------------------------------------ */
 const dopamines = ref<Dopamine[]>([]);
-const dopaHistorys = ref<DopaHistory[]>([]);
-let dateNow: Date = new Date() as Date;
+//const dopaHistorys = ref<DopaHistory[]>([]);
+const dateToday = ref(new Date());
 let nextDate: Date;
-let restMilliSecondsToNextDay: number;
+//let restMilliSecondsToNextDay: number;
 let dateIterval: any;
 let historyActive: DopaHistory;
-let dopaCaseActive: Dopamine;
+const dopaCaseActive = ref<Dopamine>();
 const isHistory = ref(false);
 
 const dopaDo = () => {
@@ -95,21 +98,22 @@ const dopaThink = () => {
   handleUpdateDopaHistory(updDopaHistory)
   //console.log("think ++")
 }
-const addhistor = () => {
+const addHistory = () => {
   let newhistory = {
-    id: Date.now(),
+    id: 1,
     id_dopamine: 1,
     dateTime: dateToString(new Date()),
     lastDoDay: 0,
     lastThinkDay: 0,
-    thinkCount: 0,
-    doCount: 0,
+    thinkCount: 7,
+    doCount: 1,
   }
-  handleAddHistory(newhistory)
-  console.log(dopaHistorys)
+  //handleAddHistory(newhistory)
+  dopaCaseActive.value!.dopaHistorys!.unshift(newhistory as DopaHistory);
+
 
 }
-const setDateIterval = () => {
+const setDateIterval = (restMilliSecondsToNextDay: number) => {
   // set date check interval
   console.log('set date check intervel')
   if (dateIterval) {
@@ -119,13 +123,14 @@ const setDateIterval = () => {
 
   let element = this;
   dateIterval = setInterval(function () {
-    dateNow = new Date()
     //console.log('interval')
-    setUpNextDay()
+    dateToday.value = calNextDate(dateToday.value)
+    console.log('pass to next date' + dateToday.value.toString())
+    checkIsPassNextDay()
   }, restMilliSecondsToNextDay);
 
 }
-const calNextDate = (actualDate: any) => {
+const calNextDate = (actualDate: Date) => {
 
   let nextDatelocal = new Date(actualDate.getTime())
   nextDatelocal.setTime(actualDate.getTime() + (24 * 60 * 60 * 1000));
@@ -136,37 +141,173 @@ const calNextDate = (actualDate: any) => {
   return nextDatelocal
 }
 
-const calRestMilliSecondsToNextDay = () => {
+const calRestMilliSecondsToNextDay = (): number => {
   //calulate next day
-  nextDate = calNextDate(dateNow)
-  restMilliSecondsToNextDay = nextDate.getTime() - dateNow.getTime()
+  nextDate = calNextDate(dateToday.value)
+  let restMilliSecondsToNextDay = nextDate.getTime() - dateToday.value.getTime()
   console.log(restMilliSecondsToNextDay)
+  return restMilliSecondsToNextDay
 }
-const setUpNextDay = () => {
-  calRestMilliSecondsToNextDay()
-  setDateIterval()
-  let today:Date = new Date()
-  console.log("new day")
-  if ((historyActive.doCount > 0 || historyActive.thinkCount > 0) /*&& dateToString(today)!= historyActive.dateTime */) {
-    handleAddHistory(historyActive)
+const checkIsPassNextDay = async () => {
+  let milliSecounds = calRestMilliSecondsToNextDay()
+  setDateIterval(milliSecounds)
+
+  //console.log("new day")
+  if (historyActive.doCount > 0 || historyActive.thinkCount > 0) {
+    console.log(historyActive)
+    console.log(historyActive.doCount)
+    console.log('history active: ')
+
+    console.log("Creat new Dopa History")
+    const newhistory = {
+      id: historyActive.id,
+      id_dopamine: historyActive.id_dopamine,
+      dateTime: historyActive.dateTime,
+      lastDoDay: historyActive.lastDoDay,
+      lastThinkDay: historyActive.lastThinkDay,
+      thinkCount: historyActive.thinkCount,
+      doCount: historyActive.doCount,
+    }
+    await handleAddHistory(newhistory)
+    //console.log("push item")
+    //console.log(newhistory)
+    dopaCaseActive.value!.dopaHistorys!.unshift(newhistory as never);
+
+    
+    historyActive.dateTime = dateToString(dateToday.value)
+    historyActive.doCount = historyActive.thinkCount = historyActive.lastDoDay = historyActive.lastThinkDay = 0;
+    await handleUpdateDopaHistory(historyActive)
+    //dopaCaseActive.value!.dopaHistorys?.push(historyActive)
+
+  } else {
+    historyActive.dateTime = dateToString(dateToday.value)
+    handleUpdateDopaHistory(historyActive)
+    console.log('history actualizat set today date')
+  }
+
+}
+
+const passNextday = () => {
+  console.log('to next day')
+  setDateIterval(1)
+}
+
+
+// dopamine handle api-----------------------------------------------
+const convertToTwoDigit = (number: number) => {
+  return number < 10 ? '0' + number.toString() : number.toString();
+}
+const dateToString = (date: Date) => {
+  return `${date.getFullYear()}-${convertToTwoDigit(date.getMonth() + 1)}-${convertToTwoDigit(date.getDate())}`
+}
+
+const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
+  const stmt = 'SELECT * FROM dopamine';
+  const values: any[] = [];
+  const fetchData = await useQuerySQLite(db, stmt, values);
+  dopamines.value = fetchData;
+  //console.log(dopamines.value)
+  if (dopamines.value.length == 0) {
+    console.log("2- not dopamine found Crear first dopamine")
+    const newDapamine = {
+      id: Date.now(), // do not care about the id value (generated by sqlite)
+      name: "Dopamine",
+      startDate: dateToString(new Date()),
+      recordBestThinkDay: 0,
+      recordBestDoDay: 0,
+      allDoDayCount: 0,
+      allThinkDayCount: 0,
+      daysCount: 0,
+    };
+    await handleAddDopamine(newDapamine)
+    getAllDopamine(db)
+  } else {
+    console.log("3 - dopamine set dopaCaseActive")
+    dopaCaseActive.value = dopamines.value[0]
+    await getHistoryByDopamineId(dopaCaseActive.value.id)
+
+  }
+
+}
+const handleAddDopamine = async (newDopamine: Dopamine) => {
+  if (db.value) {
+    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+    const lastId = await storageServ.addDopamine(newDopamine);
+    newDopamine.id = lastId;
+    dopamines.value.push(newDopamine as never);
+  }
+};
+
+
+//history ------------------------------------------
+const handleAddHistory = async (newHistory: DopaHistory) => {
+  if (db.value) {
+    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+    const lastId = await storageServ.addDopaHistory(newHistory);
+    //newHistory.id = lastId;
+  }
+};
+const getHistory = async (dopamineId: number) => {
+  console.log('4 - get Dopa history by id :' + dopamineId)
+  const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
+  const values: any[] = [];
+  const fetchData = await useQuerySQLite(db, stmt, values);
+  console.log(fetchData)
+}
+const getHistoryByDopamineId = async (dopamineId: number) => {
+  console.log('4 - get Dopa history by id :' + dopamineId)
+  const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
+  const values: any[] = [];
+  const fetchData = await useQuerySQLite(db, stmt, values);
+  dopaCaseActive.value!.dopaHistorys = fetchData as DopaHistory[]
+  console.log(dopaCaseActive.value!.dopaHistorys)
+  if (dopaCaseActive.value!.dopaHistorys.length == 0) {
+    console.log("5 - not dopaHistorys found creat first dopaHistory")
     let newhistory = {
-      id: 1,
-      id_dopamine: dopaCaseActive.id,
+      id: Date.now(),
+      id_dopamine: 1,
       dateTime: dateToString(new Date()),
       lastDoDay: 0,
       lastThinkDay: 0,
       thinkCount: 0,
       doCount: 0,
     }
-    historyActive = newhistory
-    handleUpdateDopaHistory(historyActive)
+    await handleAddHistory(newhistory)
+    getHistoryByDopamineId(dopamineId)
   } else {
-    historyActive.dateTime = dateToString(new Date())
-    handleUpdateDopaHistory(historyActive)
+    console.log("6 - set history active")
+    //console.log(dopaHistorys.value)
+    historyActive = dopaCaseActive.value!.dopaHistorys[dopaCaseActive.value!.dopaHistorys.length - 1]
+    //console.log(historyActive)
+    //isHistory.value = true
+    console.log(dopaCaseActive.value)
+    isHistory.value = true
   }
 
-}
 
+
+};
+const handleUpdateDopaHistory = async (updDopaHistory: DopaHistory) => {
+  if (db.value) {
+    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+    await storageServ.updateHistoryById(updDopaHistory);
+    dopaCaseActive.value!.dopaHistorys = dopaCaseActive.value!.dopaHistorys!.map((dopaHistory: DopaHistory) => {
+      if (dopaHistory.id === dopaHistory.id) {
+        // Clone the user and update the active property
+        return {
+          ...dopaHistory
+          , dateTime: updDopaHistory.dateTime
+          , doCount: updDopaHistory.doCount
+          , thinkCount: updDopaHistory.thinkCount
+          , lastDoDay: updDopaHistory.lastDoDay
+          , lastThinkDay: updDopaHistory.lastThinkDay
+        };
+      } else {
+        return dopaHistory;
+      }
+    });
+  }
+};
 
 /* end app main logic------------------------------------------------ */
 
@@ -212,103 +353,6 @@ const handleDeleteUser = async (userId: number) => {
 
 
 
-// dopamine handle api-----------------------------------------------
-const dateToString = (date: Date) => {
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-}
-
-const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
-  const stmt = 'SELECT * FROM dopamine';
-  const values: any[] = [];
-  const fetchData = await useQuerySQLite(db, stmt, values);
-  dopamines.value = fetchData;
-  //console.log(dopamines.value)
-  if (dopamines.value.length == 0) {
-    console.log("not dopamine found")
-    const newDapamine = {
-      id: Date.now(), // do not care about the id value (generated by sqlite)
-      name: "Dopamine",
-      startDate: dateToString(new Date()),
-      recordBestThinkDay: 0,
-      recordBestDoDay: 0,
-      allDoDayCount: 0,
-      allThinkDayCount: 0,
-      daysCount: 0,
-    };
-    await handleAddDopamine(newDapamine)
-    getAllDopamine(db)
-  }else{
-    dopaCaseActive = dopamines.value[0]
-    await getHistoryByDopamineId(dopaCaseActive.id)
-    isHistory.value = true
-  }
-
-}
-const handleAddDopamine = async (newDopamine: Dopamine) => {
-  if (db.value) {
-    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
-    const lastId = await storageServ.addDopamine(newDopamine);
-    newDopamine.id = lastId;
-    dopamines.value.push(newDopamine as never);
-  }
-};
-
-
-//history ------------------------------------------
-const handleAddHistory = async (newHistory: DopaHistory) => {
-  if (db.value) {
-    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
-    const lastId = await storageServ.addDopaHistory(newHistory);
-    newHistory.id = lastId;
-    dopaHistorys.value.push(newHistory as never);
-  }
-};
-const getHistoryByDopamineId = async (dopamineId: number) => {
-  console.log('git history')
-  const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
-  const values: any[] = [];
-  const fetchData = await useQuerySQLite(db, stmt, values);
-  dopaHistorys.value = fetchData;
-  if (dopaHistorys.value.length == 0) {
-    console.log("not dopaHistorys found")
-    let newhistory = {
-      id: Date.now(),
-      id_dopamine: 1,
-      dateTime: dateToString(new Date()),
-      lastDoDay: 0,
-      lastThinkDay: 0,
-      thinkCount: 0,
-      doCount: 0,
-    }
-    await handleAddHistory(newhistory)
-  }
-
-  console.log(dopaHistorys.value)
-  historyActive = dopaHistorys.value[0]
-  console.log(historyActive)
-  //isHistory.value = true
-
-};
-const handleUpdateDopaHistory = async (updDopaHistory: DopaHistory) => {
-  if (db.value) {
-    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
-    await storageServ.updateHistoryById(updDopaHistory);
-    dopaHistorys.value = dopaHistorys.value.map((dopaHistory: DopaHistory) => {
-      if (dopaHistory.id === dopaHistory.id) {
-        // Clone the user and update the active property
-        return {
-          ...dopaHistory
-          , doCount: updDopaHistory.doCount
-          , thinkCount: updDopaHistory.thinkCount
-          , lastDoDay: updDopaHistory.lastDoDay
-          , lastThinkDay: updDopaHistory.lastThinkDay
-        };
-      } else {
-        return dopaHistory;
-      }
-    });
-  }
-};
 
 
 onMounted(() => {
@@ -349,13 +393,14 @@ onBeforeUnmount(() => {
 });
 watch(isHistory, (newIsHistory) => {
   if (newIsHistory) {
-    console.log(historyActive)
-    setUpNextDay()
+    console.log("check next day interval")
+    checkIsPassNextDay()
   }
 
 })
 watch(isDatabase, (newIsDatabase) => {
   if (newIsDatabase) {
+    console.log("1-get all dopamines")
     getAllDopamine(db).then(() => {
     })
     getAllUsers(db).then(() => {
@@ -383,7 +428,7 @@ watch(isDatabase, (newIsDatabase) => {
 /* return {
    isInitComplete, dbInitialized, users, handleAddUser,
    handleUpdateUser, handleDeleteUser,
-   dopamines, dopaHistorys, dateNow,
+   dopamines, dopaHistorys, dateToday,
    dateToString, handleAddHistory, handleUpdateDopaHistory,
    dopaDo,dopaThink
  }*/

@@ -5,7 +5,7 @@
             <div>{{ fullDate }}</div>
         </div>
         <div class="day">
-            {{ dayNames[dateNow.getDay()] }}
+            {{ dayNames[dateToday.getDay()] }}
         </div>
     </div>
 </template>
@@ -17,7 +17,7 @@ export default defineComponent({
 
     },
     props: {
-        dateNow:{
+        dateToday:{
             type:Date,
             required: true
         }
@@ -26,15 +26,15 @@ export default defineComponent({
         return {
             dateIterval: null,
             dayNames: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-            //dateNow:new Date()
+            //dateToday:new Date()
         }
     },
     created() {
-        //this.dateNow = new Date()
+        //this.dateToday = new Date()
         //this.startDateIterval()
     },
     methods: {
-        setDateNow() {
+        setdateToday() {
             //this.dateToday= new Date();
         },
         convertToTwoDigit(number: number) {
@@ -45,15 +45,15 @@ export default defineComponent({
     computed: {
 
         fullDate() {
-            let date = this.convertToTwoDigit(this.dateNow.getDate());
-            let month = this.convertToTwoDigit(this.dateNow.getMonth() + 1)
-            let year = this.dateNow.getFullYear()
+            let date = this.convertToTwoDigit(this.dateToday.getDate());
+            let month = this.convertToTwoDigit(this.dateToday.getMonth() + 1)
+            let year = this.dateToday.getFullYear()
             return `${date} / ${month} / ${year}`
         },
         fullTime() {
-            let hours = this.convertToTwoDigit(this.dateNow.getHours());
-            let minutes = this.convertToTwoDigit(this.dateNow.getMinutes());
-            let seconds = this.convertToTwoDigit(this.dateNow.getSeconds());
+            let hours = this.convertToTwoDigit(this.dateToday.getHours());
+            let minutes = this.convertToTwoDigit(this.dateToday.getMinutes());
+            let seconds = this.convertToTwoDigit(this.dateToday.getSeconds());
             return `${hours} : ${minutes} : ${seconds}`
         }
     }

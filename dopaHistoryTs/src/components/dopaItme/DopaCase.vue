@@ -5,7 +5,7 @@
     </div>
     <div class="history-box">
         <div class="item-content">
-            <BetweenItem v-for="dopahistory in dopaHistorys" :dopaHistory="dopahistory"></BetweenItem>
+            <BetweenItem v-for="dopahistory in dopamine.dopaHistorys" :dopaHistory="dopahistory"></BetweenItem>
             <StartItme :startDate="dopamine.startDate"></StartItme>
         </div>
 
@@ -35,7 +35,7 @@ import { useQuerySQLite } from '@/hooks/UseQuerySQLite';
 
 import { Dopamine } from '@/models/Dopamine';
 import { DopaHistory } from '@/models/DopaHistory';
-const props = defineProps(['dopamine','dopaHistorys'])
+const props = defineProps(['dopamine'])
 console.log(props)
 </script>
 
