@@ -3,7 +3,7 @@
         <div class="item-layer cicle-layer">
             <div class="item-cicle-box">
                 <div class="item-cicle">
-                    {{ dopaHistory.id }}
+                    <!--{{ dopaHistory.id }}-->
                     <div><span class="dopa-think">{{ dopaHistory.thinkCount }}</span></div>
                     <div><span class="dopa-do">{{ dopaHistory.doCount }}</span></div>
                 </div>
