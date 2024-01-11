@@ -99,6 +99,20 @@ class StorageService implements IStorageService {
             throw new Error(`storageService.addUser: lastId not returned`);
         }
     }
+    async updateDopamine(dopamine:Dopamine): Promise<void> {
+        const sql = `UPDATE dopamine SET
+        name="${dopamine.name} ",
+        recordBestThinkDay="${dopamine.recordBestThinkDay} ",
+        recordBestDoDay="${dopamine.recordBestThinkDay} ",
+        allDoDayCount="${dopamine.allDoDayCount} ",
+        allThinkDayCount="${dopamine.allThinkDayCount} ",
+        daysCount="${dopamine.daysCount} ",
+        startDate="${dopamine.startDate} " 
+        WHERE id=${dopamine.id}`;
+        //console.log(sql)
+        await this.db.run(sql);
+    }
+
     //history sql
     async getHistoryByDopamineId(id:number): Promise<DopaHistory[]> {
         const sql = `SELECT * FROM history WHERE id_dopamine=${id} ORDER by date(datetime) DESC`;
@@ -109,7 +123,7 @@ class StorageService implements IStorageService {
         const sql = `INSERT INTO history (id_dopamine,datetime,doCount,thinkCount,lastDoDay,lastThinkDay) VALUES (${newHistory.id_dopamine},"${newHistory.dateTime}",${newHistory.doCount},${newHistory.thinkCount},${newHistory.lastDoDay},${newHistory.lastThinkDay});`;
         console.log(sql)
         const res = await this.db.run(sql/*, [
-            newHistory.id_dopamine,
+            newHistory.id_dopamine,``
             newHistory.dateTime,
             newHistory.doCount,
             newHistory.thinkCount,

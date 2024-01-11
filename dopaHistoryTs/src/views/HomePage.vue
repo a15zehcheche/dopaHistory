@@ -8,7 +8,7 @@
       <ion-button color="warning" @click="dopaThink">Think</ion-button>
       <!--ion-button color="primary" @click="passNextday">next day</ion-button>
       <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
-      <ion-button color="primary" @click="addHistory">history Active</ion-butto-->
+      <ion-button color="primary" @click="textBtn">test</ion-button-->
     </div>
     <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
   </div>
@@ -96,12 +96,45 @@ const dopaThink = () => {
   handleUpdateDopaHistory(historyActive)
   //console.log("think ++")
 }
-const addHistory = () => {
-  console.log(historyActive)
+const textBtn = () => {
+  calCountDay()
+  //console.log(historyActive)
 }
 const passNextday = () => {
   console.log('to next day')
   setDateIterval(1)
+}
+const calNextDate = (actualDate: Date) => {
+  let nextDatelocal = new Date(actualDate.getTime())
+  nextDatelocal.setTime(actualDate.getTime() + (24 * 60 * 60 * 1000));
+  nextDatelocal.setHours(0)
+  nextDatelocal.setMinutes(0)
+  nextDatelocal.setSeconds(0)
+  //console.log(nextDatelocal.toString())
+  return nextDatelocal
+}
+
+const calCountDay = (): number => {
+  let countDay = new Date(dateToString(dateToday.value)).getTime() - new Date(dopaCaseActive.value!.startDate).getTime()
+  countDay = countDay / 86400000
+  console.log(countDay)
+  return countDay
+}
+
+const calRestMilliSecondsToNextDay = (): number => {
+  //calulate next day
+  nextDate = calNextDate(dateToday.value)
+  let restMilliSecondsToNextDay = nextDate.getTime() - dateToday.value.getTime()
+  console.log(restMilliSecondsToNextDay)
+  return restMilliSecondsToNextDay
+}
+
+const convertToTwoDigit = (number: number) => {
+  return number < 10 ? '0' + number.toString() : number.toString();
+}
+
+const dateToString = (date: Date) => {
+  return `${date.getFullYear()}-${convertToTwoDigit(date.getMonth() + 1)}-${convertToTwoDigit(date.getDate())}`
 }
 
 const setDateIterval = (restMilliSecondsToNextDay: number) => {
@@ -121,24 +154,7 @@ const setDateIterval = (restMilliSecondsToNextDay: number) => {
   }, restMilliSecondsToNextDay);
 
 }
-const calNextDate = (actualDate: Date) => {
 
-  let nextDatelocal = new Date(actualDate.getTime())
-  nextDatelocal.setTime(actualDate.getTime() + (24 * 60 * 60 * 1000));
-  nextDatelocal.setHours(0)
-  nextDatelocal.setMinutes(0)
-  nextDatelocal.setSeconds(0)
-  //console.log(nextDatelocal.toString())
-  return nextDatelocal
-}
-
-const calRestMilliSecondsToNextDay = (): number => {
-  //calulate next day
-  nextDate = calNextDate(dateToday.value)
-  let restMilliSecondsToNextDay = nextDate.getTime() - dateToday.value.getTime()
-  console.log(restMilliSecondsToNextDay)
-  return restMilliSecondsToNextDay
-}
 const checkIsPassNextDay = async () => {
   let milliSecoundsReal = calRestMilliSecondsToNextDay()
   setDateIterval(milliSecoundsReal)
@@ -162,13 +178,14 @@ const checkIsPassNextDay = async () => {
         dopaCaseActive.value!.dopaHistorys!.unshift(newHistory.value);
         historyActive = newHistory.value
       }
-
     } else {
       historyActive.dateTime = dateToString(dateToday.value)
       console.log('set history active date : ' + dateToString(dateToday.value))
-      handleUpdateDopaHistory(historyActive)
+      await handleUpdateDopaHistory(historyActive)
     }
-  }else{
+    dopaCaseActive.value!.daysCount = calCountDay()
+    await handleUpdateDopamine(dopaCaseActive.value!)
+  } else {
     console.log("同一天只更新check intervar，不修改任何当前数据")
   }
 
@@ -181,12 +198,6 @@ const checkIsPassNextDay = async () => {
 
 
 // dopamine handle api-----------------------------------------------
-const convertToTwoDigit = (number: number) => {
-  return number < 10 ? '0' + number.toString() : number.toString();
-}
-const dateToString = (date: Date) => {
-  return `${date.getFullYear()}-${convertToTwoDigit(date.getMonth() + 1)}-${convertToTwoDigit(date.getDate())}`
-}
 
 const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
   const stmt = 'SELECT * FROM dopamine';
@@ -222,6 +233,13 @@ const handleAddDopamine = async (newDopamine: Dopamine) => {
     const lastId = await storageServ.addDopamine(newDopamine);
     newDopamine.id = lastId;
     dopamines.value.push(newDopamine as never);
+  }
+};
+
+const handleUpdateDopamine = async (updDopamine: Dopamine) => {
+  if (db.value) {
+    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+    await storageServ.updateDopamine(updDopamine);
   }
 };
 
@@ -266,36 +284,15 @@ const getHistoryByDopamineId = async (dopamineId: number) => {
     getHistoryByDopamineId(dopamineId)
   } else {
     console.log("6 - set history active")
-    //console.log(dopaHistorys.value)
     historyActive = dopaCaseActive.value!.dopaHistorys[0]
-    //console.log(historyActive)
-    //isHistory.value = true
     console.log(dopaCaseActive.value)
     isHistory.value = true
   }
-
-
-
 };
 const handleUpdateDopaHistory = async (updDopaHistory: DopaHistory) => {
   if (db.value) {
     const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
     await storageServ.updateHistoryById(updDopaHistory);
-    /*dopaCaseActive.value!.dopaHistorys = dopaCaseActive.value!.dopaHistorys!.map((dopaHistory: DopaHistory) => {
-      if (dopaHistory.id === dopaHistory.id) {
-        // Clone the user and update the active property
-        return {
-          ...dopaHistory
-          , dateTime: updDopaHistory.dateTime
-          , doCount: updDopaHistory.doCount
-          , thinkCount: updDopaHistory.thinkCount
-          , lastDoDay: updDopaHistory.lastDoDay
-          , lastThinkDay: updDopaHistory.lastThinkDay
-        };
-      } else {
-        return dopaHistory;
-      }
-    });*/
   }
 };
 
@@ -432,6 +429,7 @@ watch(isDatabase, (newIsDatabase) => {
   bottom: 0;
   z-index: 1;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .main-body {
