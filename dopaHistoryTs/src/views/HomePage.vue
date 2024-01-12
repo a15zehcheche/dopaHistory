@@ -1,6 +1,7 @@
 <template>
   <div class="main-body">
     <app-date-time :dateToday="dateToday"></app-date-time>
+    <dopa-bar-main :dopamines="dopamines"></dopa-bar-main>
     <dopa-case v-if="dopaCaseActive" :dopamine="dopaCaseActive"></dopa-case>
 
     <div class="action-btn-box">
@@ -36,6 +37,7 @@ import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 
 import AppDateTime from '../components/time/AppDateTime.vue';
 import DopaCase from '../components/dopaItme/DopaCase.vue'
+import DopaBarMain from '../components/dopaBar/DopaBarMain.vue'
 //new Date('2024-01-15T23:59:55'),
 
 
