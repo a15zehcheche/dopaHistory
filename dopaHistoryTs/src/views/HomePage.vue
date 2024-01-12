@@ -6,9 +6,9 @@
     <div class="action-btn-box">
       <ion-button color="danger" @click="dopaDo">Do</ion-button>
       <ion-button color="warning" @click="dopaThink">Think</ion-button>
-      <!--ion-button color="primary" @click="passNextday">next day</ion-button>
+      <ion-button color="primary" @click="passNextday">next day</ion-button>
       <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
-      <ion-button color="primary" @click="textBtn">test</ion-button-->
+      <ion-button color="primary" @click="textBtn">test</ion-button>
     </div>
     <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
   </div>
@@ -117,6 +117,7 @@ const calNextDate = (actualDate: Date) => {
 const calCountDay = (): number => {
   let countDay = new Date(dateToString(dateToday.value)).getTime() - new Date(dopaCaseActive.value!.startDate).getTime()
   countDay = countDay / 86400000
+  countDay = parseInt(countDay.toString())
   console.log(countDay)
   return countDay
 }
