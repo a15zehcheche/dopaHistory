@@ -444,6 +444,9 @@ watch(isDatabase, (newIsDatabase) => {
   width: 100%;
   flex-wrap: wrap;
 }
+.action-btn-box ion-button{
+  width: 150px;
+}
 
 .main-body {
   position: relative;
