@@ -6,9 +6,9 @@
     <div class="action-btn-box">
       <ion-button color="danger" @click="dopaDo">Do</ion-button>
       <ion-button color="warning" @click="dopaThink">Think</ion-button>
-      <ion-button color="primary" @click="passNextday">next day</ion-button>
+      <!--ion-button color="primary" @click="passNextday">next day</ion-button>
       <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
-      <ion-button color="primary" @click="textBtn">test</ion-button>
+      <ion-button color="primary" @click="textBtn">test</ion-button-->
     </div>
     <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
   </div>
@@ -85,15 +85,17 @@ let historyActive: DopaHistory;
 const dopaCaseActive = ref<Dopamine>();
 const isHistory = ref(false);
 
-const dopaDo = () => {
+const dopaDo = async () => {
   historyActive.doCount++
-  handleUpdateDopaHistory(historyActive)
+  await handleUpdateDopaHistory(historyActive)
+  addAllDoCount()
   //console.log("do ++")
 }
 
-const dopaThink = () => {
+const dopaThink = async () => {
   historyActive.thinkCount++
-  handleUpdateDopaHistory(historyActive)
+  await handleUpdateDopaHistory(historyActive)
+  addAllThinkCount()
   //console.log("think ++")
 }
 const textBtn = () => {
@@ -103,6 +105,14 @@ const textBtn = () => {
 const passNextday = () => {
   console.log('to next day')
   setDateIterval(1)
+}
+const addAllDoCount = async() => {
+  dopaCaseActive.value!.allDoDayCount ++
+  await handleUpdateDopamine(dopaCaseActive.value!)
+}
+const addAllThinkCount = async() => {
+  dopaCaseActive.value!.allThinkDayCount ++
+  await handleUpdateDopamine(dopaCaseActive.value!)
 }
 const calNextDate = (actualDate: Date) => {
   let nextDatelocal = new Date(actualDate.getTime())
