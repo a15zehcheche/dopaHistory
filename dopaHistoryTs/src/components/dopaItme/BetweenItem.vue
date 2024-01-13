@@ -10,10 +10,10 @@
                 <span class="item-date">{{dateToString}}</span>
             </div>
 
-            <!-- div class="item-days">
-                <div><span class="dopa-think">{{ dopaHistory.lastThinkDay }} days</span></div>
-                <div><span class="dopa-do">{{ dopaHistory.lastDoDay }} days</span></div>
-            </div -->
+            <div class="item-days">
+                <div><span class="dopa-think">{{ dopaHistory.lastThinkDay }} 天</span></div>
+                <div><span class="dopa-do">{{ dopaHistory.lastDoDay }} 天</span></div>
+            </div>
         </div>
         <div class="item-layer">
             <div class="item-line"></div>

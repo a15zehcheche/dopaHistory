@@ -7,9 +7,9 @@
     <div class="action-btn-box">
       <ion-button color="danger" @click="dopaDo">Do</ion-button>
       <ion-button color="warning" @click="dopaThink">Think</ion-button>
-      <!--ion-button color="primary" @click="passNextday">next day</ion-button>
+      <ion-button color="primary" @click="passNextday">next day</ion-button>
       <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
-      <ion-button color="primary" @click="textBtn">test</ion-button-->
+      <ion-button color="primary" @click="textBtn">test</ion-button>
     </div>
     <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
   </div>
@@ -89,6 +89,10 @@ const isHistory = ref(false);
 
 const dopaDo = async () => {
   historyActive.doCount++
+  if(historyActive.thinkCount ==0){
+    //if do, think +1
+    historyActive.thinkCount++
+  }
   await handleUpdateDopaHistory(historyActive)
   addAllDoCount()
   //console.log("do ++")
@@ -108,12 +112,17 @@ const passNextday = () => {
   console.log('to next day')
   setDateIterval(1)
 }
-const addAllDoCount = async() => {
-  dopaCaseActive.value!.allDoDayCount ++
+const addAllDoCount = async () => {
+  dopaCaseActive.value!.allDoDayCount++
   await handleUpdateDopamine(dopaCaseActive.value!)
 }
-const addAllThinkCount = async() => {
-  dopaCaseActive.value!.allThinkDayCount ++
+const addAllThinkCount = async () => {
+  dopaCaseActive.value!.allThinkDayCount++
+  await handleUpdateDopamine(dopaCaseActive.value!)
+}
+
+const udpateRecordBestCount = async () => {
+
   await handleUpdateDopamine(dopaCaseActive.value!)
 }
 const calNextDate = (actualDate: Date) => {
@@ -176,12 +185,14 @@ const checkIsPassNextDay = async () => {
     console.log('新的一天')
     if (historyActive.doCount > 0 || historyActive.thinkCount > 0) {
       console.log("Creat new Dopa History")
+      let lastDoDay = historyActive.doCount > 0 ? 1 : (historyActive.lastDoDay + 1)
+      let lastThinkDay = historyActive.thinkCount > 0 ? 1 : (historyActive.lastThinkDay +1)
       const newHistory = ref({
         id: Date.now(),
         id_dopamine: dopaCaseActive.value!.id,
         dateTime: dateToString(dateToday.value),
-        lastDoDay: 0,
-        lastThinkDay: 0,
+        lastDoDay: lastDoDay,
+        lastThinkDay: lastThinkDay,
         thinkCount: 0,
         doCount: 0,
       })
@@ -193,9 +204,12 @@ const checkIsPassNextDay = async () => {
       }
     } else {
       historyActive.dateTime = dateToString(dateToday.value)
+      historyActive.lastDoDay ++;
+      historyActive.lastThinkDay ++;
       console.log('set history active date : ' + dateToString(dateToday.value))
       await handleUpdateDopaHistory(historyActive)
     }
+
     dopaCaseActive.value!.daysCount = calCountDay()
     await handleUpdateDopamine(dopaCaseActive.value!)
   } else {
@@ -211,6 +225,7 @@ const checkIsPassNextDay = async () => {
 
 
 // dopamine handle api-----------------------------------------------
+
 
 const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
   const stmt = 'SELECT * FROM dopamine';
@@ -444,7 +459,8 @@ watch(isDatabase, (newIsDatabase) => {
   width: 100%;
   flex-wrap: wrap;
 }
-.action-btn-box ion-button{
+
+.action-btn-box ion-button {
   width: 150px;
 }
 
