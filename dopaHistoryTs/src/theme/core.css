@@ -1,6 +1,7 @@
 ion-toolbar {
-  --background: var(--ion-color-primary);
-  --color: var(--ion-color-primary-contrast);
+  /*--background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);*/
+  --background: white;
 }
 
 .dopa-do{
