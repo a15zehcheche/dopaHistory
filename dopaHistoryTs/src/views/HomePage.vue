@@ -7,9 +7,9 @@
     <div class="action-btn-box">
       <ion-button color="danger" @click="dopaDo">Do</ion-button>
       <ion-button color="warning" @click="dopaThink">Think</ion-button>
-      <ion-button color="primary" @click="passNextday">next day</ion-button>
+      <!--ion-button color="primary" @click="passNextday">next day</ion-button>
       <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
-      <ion-button color="primary" @click="textBtn">test</ion-button>
+      <ion-button color="primary" @click="textBtn">test</ion-button-->
     </div>
     <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
   </div>
@@ -460,7 +460,7 @@ watch(isDatabase, (newIsDatabase) => {
   display: flex;
   justify-content: space-around;
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   z-index: 1;
   width: 100%;
   flex-wrap: wrap;
