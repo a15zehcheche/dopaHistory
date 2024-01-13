@@ -121,8 +121,13 @@ const addAllThinkCount = async () => {
   await handleUpdateDopamine(dopaCaseActive.value!)
 }
 
-const udpateRecordBestCount = async () => {
-
+const checkBestRecord = async (dopaHistory:DopaHistory) => {
+  if(dopaHistory.lastDoDay > dopaCaseActive.value?.recordBestDoDay!){
+    dopaCaseActive.value!.recordBestDoDay = dopaHistory.lastDoDay
+  }
+  if(dopaHistory.lastThinkDay > dopaCaseActive.value?.recordBestThinkDay!){
+    dopaCaseActive.value!.recordBestThinkDay = dopaHistory.lastThinkDay
+  }
   await handleUpdateDopamine(dopaCaseActive.value!)
 }
 const calNextDate = (actualDate: Date) => {
@@ -202,14 +207,15 @@ const checkIsPassNextDay = async () => {
         dopaCaseActive.value!.dopaHistorys!.unshift(newHistory.value);
         historyActive = newHistory.value
       }
+      checkBestRecord(newHistory.value)
     } else {
       historyActive.dateTime = dateToString(dateToday.value)
       historyActive.lastDoDay ++;
       historyActive.lastThinkDay ++;
+      checkBestRecord(historyActive)
       console.log('set history active date : ' + dateToString(dateToday.value))
       await handleUpdateDopaHistory(historyActive)
     }
-
     dopaCaseActive.value!.daysCount = calCountDay()
     await handleUpdateDopamine(dopaCaseActive.value!)
   } else {
