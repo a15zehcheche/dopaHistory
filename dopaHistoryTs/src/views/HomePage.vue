@@ -12,7 +12,8 @@
       <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
       <ion-button color="primary" @click="textBtn">test</ion-button-->
       </div>
-      <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
+      <!--user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list-->
+
     </div>
   </ion-page>
 </template>
@@ -79,6 +80,15 @@ const openDatabase = async () => {
 };
 
 /* app main logic------------------------------------------------ */
+import { App } from '@capacitor/app';
+
+App.addListener('appStateChange', ({ isActive }) => {
+  if(isActive){
+    checkIsPassNextDay()
+  }
+  //console.log('App state changed. Is active?', isActive);
+});
+
 const dopamines = ref<Dopamine[]>([]);
 //const dopaHistorys = ref<DopaHistory[]>([]);
 const dateToday = ref(new Date());
@@ -154,7 +164,7 @@ const calCountDay = (): number => {
 const calRestMilliSecondsToNextDay = (): number => {
   //calulate next day
   nextDate = calNextDate(dateToday.value)
-  let restMilliSecondsToNextDay = nextDate.getTime() - dateToday.value.getTime()
+  let restMilliSecondsToNextDay = nextDate.getTime() - new Date().getTime()
   console.log(restMilliSecondsToNextDay)
   return restMilliSecondsToNextDay
 }
@@ -186,11 +196,10 @@ const setDateIterval = (restMilliSecondsToNextDay: number) => {
 }
 
 const checkIsPassNextDay = async () => {
-  let milliSecoundsReal = calRestMilliSecondsToNextDay()
-  setDateIterval(milliSecoundsReal)
   //console.log("new day")
   if (dateToString(new Date(historyActive.dateTime)) != dateToString(dateToday.value)) {
     console.log('新的一天')
+    dateToday.value = new Date()
     if (historyActive.doCount > 0 || historyActive.thinkCount > 0) {
       console.log("Creat new Dopa History")
       let lastDoDay = historyActive.doCount > 0 ? 1 : (historyActive.lastDoDay + 1)
@@ -215,7 +224,7 @@ const checkIsPassNextDay = async () => {
       historyActive.dateTime = dateToString(dateToday.value)
       historyActive.lastDoDay++;
       historyActive.lastThinkDay++;
-      checkBestRecord(historyActive)
+      await checkBestRecord(historyActive)
       console.log('set history active date : ' + dateToString(dateToday.value))
       await handleUpdateDopaHistory(historyActive)
     }
@@ -225,6 +234,8 @@ const checkIsPassNextDay = async () => {
     console.log("同一天只更新check intervar，不修改任何当前数据")
   }
 
+  let milliSecoundsReal = calRestMilliSecondsToNextDay()
+  setDateIterval(milliSecoundsReal)
   console.log('history actualizat set today date')
 
   //getHistoryByDopamineId(dopaCaseActive.value!.id)
@@ -425,10 +436,10 @@ watch(isHistory, (newIsHistory) => {
 watch(isDatabase, (newIsDatabase) => {
   if (newIsDatabase) {
     console.log("1-get all dopamines")
-    getAllDopamine(db).then(() => {
-    })
-    getAllUsers(db).then(() => {
+    /*getAllUsers(db).then(() => {
 
+    })*/
+    getAllDopamine(db).then(() => {
     }).catch((error: any) => {
       const msg = `close database:
                           ${error.message ? error.message : error}`;

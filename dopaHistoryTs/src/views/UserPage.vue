@@ -17,4 +17,10 @@
 <script lang="ts" setup>
 
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
+import{onMounted, ref} from 'vue'
+
+
+onMounted(()=>{
+
+})
 </script>
