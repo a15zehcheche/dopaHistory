@@ -12,13 +12,13 @@
     </div>
     <div class="dopa-info">
         <div class="totalCount">
-            <img width="30px" src="@/assets/total.svg" />
+            <img width="30px" src="/assets/total.svg" />
             <span class="dopa-do">{{ dopamine.allDoDayCount }}</span>
             &nbsp;-&nbsp;
             <span class="dopa-think">{{ dopamine.allThinkDayCount }}</span>
         </div>
         <div class="bestDaysCount">
-            <img width="30px" src="@/assets/chess-queen.svg" />
+            <img width="30px" src="/assets/chess-queen.svg" />
             <span class="dopa-do">{{ dopamine.recordBestDoDay }}</span>
             &nbsp;-&nbsp;
             <span class="dopa-think">{{ dopamine.recordBestThinkDay }}</span>

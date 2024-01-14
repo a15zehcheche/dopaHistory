@@ -3,7 +3,7 @@
         <div class="item-layer cicle-layer">
             <div class="item-cicle-box">
                 <div class="item-cicle">
-                    <img width="30px" src="@/assets/flag-checkered.svg" />
+                    <img width="30px" src="/assets/flag-checkered.svg" />
                 </div>
                 <span class="item-date">{{ dateToString }}</span>
             </div>

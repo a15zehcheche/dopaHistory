@@ -1,18 +1,20 @@
 <template>
-  <div class="main-body">
-    <app-date-time :dateToday="dateToday"></app-date-time>
-    <dopa-bar-main :dopamines="dopamines"></dopa-bar-main>
-    <dopa-case v-if="dopaCaseActive" :dopamine="dopaCaseActive"></dopa-case>
+  <ion-page>
+    <div class="main-body">
+      <app-date-time :dateToday="dateToday"></app-date-time>
+      <dopa-bar-main :dopamines="dopamines"></dopa-bar-main>
+      <dopa-case v-if="dopaCaseActive" :dopamine="dopaCaseActive"></dopa-case>
 
-    <div class="action-btn-box">
-      <ion-button color="danger" @click="dopaDo">Do</ion-button>
-      <ion-button color="warning" @click="dopaThink">Think</ion-button>
-      <!--ion-button color="primary" @click="passNextday">next day</ion-button>
+      <div class="action-btn-box">
+        <ion-button color="danger" @click="dopaDo">Do</ion-button>
+        <ion-button color="warning" @click="dopaThink">Think</ion-button>
+        <!--ion-button color="primary" @click="passNextday">next day</ion-button>
       <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
       <ion-button color="primary" @click="textBtn">test</ion-button-->
+      </div>
+      <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
     </div>
-    <user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list>
-  </div>
+  </ion-page>
 </template>
   
 <script lang="ts" setup>
@@ -89,9 +91,10 @@ const isHistory = ref(false);
 
 const dopaDo = async () => {
   historyActive.doCount++
-  if(historyActive.thinkCount ==0){
+  if (historyActive.thinkCount == 0) {
     //if do, think +1
     historyActive.thinkCount++
+    await addAllThinkCount()
   }
   await handleUpdateDopaHistory(historyActive)
   addAllDoCount()
@@ -121,11 +124,11 @@ const addAllThinkCount = async () => {
   await handleUpdateDopamine(dopaCaseActive.value!)
 }
 
-const checkBestRecord = async (dopaHistory:DopaHistory) => {
-  if(dopaHistory.lastDoDay > dopaCaseActive.value?.recordBestDoDay!){
+const checkBestRecord = async (dopaHistory: DopaHistory) => {
+  if (dopaHistory.lastDoDay > dopaCaseActive.value?.recordBestDoDay!) {
     dopaCaseActive.value!.recordBestDoDay = dopaHistory.lastDoDay
   }
-  if(dopaHistory.lastThinkDay > dopaCaseActive.value?.recordBestThinkDay!){
+  if (dopaHistory.lastThinkDay > dopaCaseActive.value?.recordBestThinkDay!) {
     dopaCaseActive.value!.recordBestThinkDay = dopaHistory.lastThinkDay
   }
   await handleUpdateDopamine(dopaCaseActive.value!)
@@ -191,7 +194,7 @@ const checkIsPassNextDay = async () => {
     if (historyActive.doCount > 0 || historyActive.thinkCount > 0) {
       console.log("Creat new Dopa History")
       let lastDoDay = historyActive.doCount > 0 ? 1 : (historyActive.lastDoDay + 1)
-      let lastThinkDay = historyActive.thinkCount > 0 ? 1 : (historyActive.lastThinkDay +1)
+      let lastThinkDay = historyActive.thinkCount > 0 ? 1 : (historyActive.lastThinkDay + 1)
       const newHistory = ref({
         id: Date.now(),
         id_dopamine: dopaCaseActive.value!.id,
@@ -210,8 +213,8 @@ const checkIsPassNextDay = async () => {
       checkBestRecord(newHistory.value)
     } else {
       historyActive.dateTime = dateToString(dateToday.value)
-      historyActive.lastDoDay ++;
-      historyActive.lastThinkDay ++;
+      historyActive.lastDoDay++;
+      historyActive.lastThinkDay++;
       checkBestRecord(historyActive)
       console.log('set history active date : ' + dateToString(dateToday.value))
       await handleUpdateDopaHistory(historyActive)

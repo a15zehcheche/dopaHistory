@@ -11,3 +11,11 @@ ion-toolbar {
   color: orange;
 }
 
+/*关闭 菜单点击特效*/
+.ios,
+.md,
+.wp {
+    .disable-ripple ion-tab-effect {
+       display: none;
+    }
+}
