@@ -7,7 +7,7 @@ import indexPage from '../views/indexPage.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/pages'
   },
   {
     path: '/home',
