@@ -11,3 +11,5 @@ npx capacitor run android
 ```
 ## open project in android studio
 ```npx capacitor open androids```
+## Live reload
+```ionic capacitor run android -l --external```
