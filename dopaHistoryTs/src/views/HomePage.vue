@@ -24,7 +24,7 @@ import {
   defineComponent, ref, computed, getCurrentInstance, onMounted,
   onBeforeUnmount, watch, Ref
 } from 'vue';
-import { useIonRouter } from '@ionic/vue';
+import {useBackButton, useIonRouter } from '@ionic/vue';
 import {
   IonPage, IonHeader, IonToolbar, IonButton, IonBackButton, IonTitle,
   IonContent, IonCard
@@ -42,6 +42,7 @@ import AppDateTime from '../components/time/AppDateTime.vue';
 import DopaCase from '../components/dopaItme/DopaCase.vue'
 import DopaBarMain from '../components/dopaBar/DopaBarMain.vue'
 //new Date('2024-01-15T23:59:55'),
+import { App } from '@capacitor/app';
 
 
 const dbNameRef = ref('');
@@ -80,7 +81,7 @@ const openDatabase = async () => {
 };
 
 /* app main logic------------------------------------------------ */
-import { App } from '@capacitor/app';
+
 
 App.addListener('appStateChange', ({ isActive }) => {
   if(isActive){
