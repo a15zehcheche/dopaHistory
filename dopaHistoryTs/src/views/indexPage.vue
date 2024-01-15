@@ -3,12 +3,13 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom" mode="ios">
-        <ion-tab-button tab="home" @click="routerToHome">
+
+        <ion-tab-button tab="home" @click="routerToHome" :class="{ 'tab-selected': isTabActive('home') }">
           <ion-icon aria-hidden="true" size="small" icon="assets/apps.svg" />
           <ion-label>首页</ion-label>
         </ion-tab-button>
-        <ion-tab-button tab="user" @click="routerToUser">
-          <ion-icon aria-hidden="true" size="small" icon="assets/user.svg"/>
+        <ion-tab-button tab="user" @click="routerToUser" :class="{ 'tab-selected': isTabActive('user') }">
+          <ion-icon aria-hidden="true" size="small" icon="assets/user.svg" />
           <ion-label>我的</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
@@ -18,22 +19,32 @@
 
 <script setup lang="ts">
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import {useBackButton, useIonRouter } from '@ionic/vue';
+import { useBackButton, useIonRouter } from '@ionic/vue';
 import { App } from '@capacitor/app';
-const router = useIonRouter();
+import { useRoute } from 'vue-router';
 
-const routerToHome = ()=>{
+const router = useIonRouter();
+const vroute =useRoute();
+const routerToHome = () => {
   router.replace('/pages/home')
 }
-const routerToUser = ()=>{
+const routerToUser = () => {
   router.replace('/pages/user')
 }
 
+const isTabActive = (tabName:String) => {
+  return vroute.name === tabName;
+};
+
 useBackButton(-1, () => {
   //console.log('按返回')
-  if(!router.canGoBack()){
+  if (!router.canGoBack()) {
     App.minimizeApp()
   }
 })
 
 </script>
+
+<style>
+
+</style>
