@@ -1,62 +1,15 @@
 <template>
-    <ion-page>
-        <ion-header>
-            <ion-toolbar>
-                <ion-title>用户</ion-title>
-            </ion-toolbar>
-        </ion-header>
-        <ion-content :fullscreen="true">
-            <ion-header collapse="condense">
-                <ion-toolbar>
-                    <ion-title size="large">Tab 1</ion-title>
-                </ion-toolbar>
-            </ion-header>
-            <div>用户</div>
-        </ion-content>
-    </ion-page>
+    <base-layout pageTitle="用户">
+        <ion-button router-link='/setting'>to setting</ion-button>
+    </base-layout>
 </template>
 <script lang="ts" setup>
+import BaseLayout from '@/components/app/BaseLayout.vue';
+import { useRouter } from 'vue-router';
+import { useIonRouter, IonButton} from '@ionic/vue';
+const router = useRouter();
 
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import { onMounted, ref } from 'vue'
-import { useBackButton, useIonRouter } from '@ionic/vue';
-import { App } from '@capacitor/app';
-import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
-
-let UserHardBackClickt=false
-/*useBackButton(-1, () => {
-    UserHardBackClickt = true
-    console.log('user按返回')
-
-})*/
-/*
-onBeforeRouteLeave((to, from, next) => {
-    console.log('leave to user')
-    console.log(UserHardBackClickt)
-    if(UserHardBackClickt){
-        next(false)
-        UserHardBackClickt=false
-        App.minimizeApp()
-    }else{
-        next(true)
-    }
-   
-})*/
-
-
-
-
-
-onMounted(() => {
-   
-    /*
-    document.addEventListener('backbutton', function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        console.log('hello');
-
-    }, false);
-    */
-})
-
+const toSetting = () => {
+    router.push('/setting')
+}
 </script>

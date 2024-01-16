@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <base-layout pageTitle="主页">
     <div class="main-body">
       <app-date-time :dateToday="dateToday"></app-date-time>
       <dopa-bar-main :dopamines="dopamines"></dopa-bar-main>
@@ -11,14 +11,19 @@
         <!--ion-button color="primary" @click="passNextday">next day</ion-button>
       <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
       <ion-button color="primary" @click="textBtn">test</ion-button-->
+       
+
       </div>
       <!--user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list-->
 
     </div>
-  </ion-page>
+  </base-layout>
 </template>
   
 <script lang="ts" setup>
+const toSetting =()=>{
+    router.push('/setting')
+}
 
 import {
   defineComponent, ref, computed, getCurrentInstance, onMounted,
@@ -41,6 +46,7 @@ import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import AppDateTime from '../components/time/AppDateTime.vue';
 import DopaCase from '../components/dopaItme/DopaCase.vue'
 import DopaBarMain from '../components/dopaBar/DopaBarMain.vue'
+import BaseLayout from '@/components/app/BaseLayout.vue';
 //new Date('2024-01-15T23:59:55'),
 import { App } from '@capacitor/app';
 
@@ -200,7 +206,7 @@ const setDateIterval = (restMilliSecondsToNextDay: number) => {
 
 const checkIsPassNextDay = async () => {
   console.log("检查是不是同一天")
-  console.log(dateToString(new Date(historyActive.dateTime)),dateToString(dateToday.value))
+  console.log(dateToString(new Date(historyActive.dateTime)), dateToString(dateToday.value))
   if (dateToString(new Date(historyActive.dateTime)) != dateToString(dateToday.value)) {
     console.log('新的一天')
     dateToday.value = new Date()
