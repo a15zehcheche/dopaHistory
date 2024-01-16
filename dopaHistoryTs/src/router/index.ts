@@ -27,6 +27,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/HomePage.vue')
       },
       {
+        path: 'comment',
+        name:'comment',
+        component: () => import('@/views/CommentPage.vue')
+      },
+      {
+        path: 'statis',
+        name:'statis',
+        component: () => import('@/views/StatisPage.vue')
+      },
+      {
         path: 'user',
         name:'user',
         component: () => import('@/views/UserPage.vue')

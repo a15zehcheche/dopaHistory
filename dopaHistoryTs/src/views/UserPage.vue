@@ -2,7 +2,7 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>User</ion-title>
+                <ion-title>用户</ion-title>
             </ion-toolbar>
         </ion-header>
         <ion-content :fullscreen="true">
@@ -11,7 +11,7 @@
                     <ion-title size="large">Tab 1</ion-title>
                 </ion-toolbar>
             </ion-header>
-            <div>replace</div>
+            <div>用户</div>
         </ion-content>
     </ion-page>
 </template>

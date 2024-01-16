@@ -8,6 +8,14 @@
           <ion-icon aria-hidden="true" size="small" icon="assets/apps.svg" />
           <ion-label>首页</ion-label>
         </ion-tab-button>
+        <ion-tab-button tab="statistic" @click="routerToStatis" :class="{ 'tab-selected': isTabActive('statis') }">
+          <ion-icon aria-hidden="true" size="small" icon="assets/stats.svg" />
+          <ion-label>统计</ion-label>
+        </ion-tab-button>
+        <ion-tab-button tab="comment" @click="routerToComment" :class="{ 'tab-selected': isTabActive('comment') }">
+          <ion-icon aria-hidden="true" size="small" icon="assets/comment.svg" />
+          <ion-label>记录</ion-label>
+        </ion-tab-button>
         <ion-tab-button tab="user" @click="routerToUser" :class="{ 'tab-selected': isTabActive('user') }">
           <ion-icon aria-hidden="true" size="small" icon="assets/user.svg" />
           <ion-label>我的</ion-label>
@@ -30,6 +38,13 @@ const routerToHome = () => {
 }
 const routerToUser = () => {
   router.replace('/pages/user')
+}
+const routerToStatis =()=>{
+  router.replace('/pages/statis')
+
+}
+const routerToComment =()=>{
+  router.replace('/pages/comment')
 }
 
 const isTabActive = (tabName:String) => {
