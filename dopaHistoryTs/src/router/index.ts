@@ -37,6 +37,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/user/SettingPage.vue'),
 
   },
+  {
+    path: '/dopaCase',
+    name: 'dopaCase',
+    component: () => import('@/views/user/DopaCasePage.vue'),
+
+  },
 
   {
     path: '/pages/',
