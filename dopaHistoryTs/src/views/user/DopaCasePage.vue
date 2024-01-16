@@ -24,17 +24,20 @@
     </ChildBaseLayout>
 </template>
 <script lang="ts" setup>
-import { IonModal, IonButton, IonInput,IonIcon } from '@ionic/vue';
+import { IonModal, IonButton, IonInput, IonIcon } from '@ionic/vue';
 import { add } from "ionicons/icons";
 import { ref } from 'vue'
 
 import ChildBaseLayout from '@/components/app/ChildBaseLayout.vue';
 const props = defineProps(['pageDefaultBackLink'])
 const dopaNameInput = ref()
- const modal = ref();
+const modal = ref();
 
-  const close = () => modal.value.$el.dismiss();
-  const confirm = () => modal.value.$el.dismiss();
+const close = () => { 
+    dopaNameInput.value =''
+    modal.value.$el.dismiss(); 
+}
+const confirm = () => modal.value.$el.dismiss();
 </script>
 
 <style>
