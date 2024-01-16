@@ -24,7 +24,7 @@ import {
   defineComponent, ref, computed, getCurrentInstance, onMounted,
   onBeforeUnmount, watch, Ref
 } from 'vue';
-import {useBackButton, useIonRouter } from '@ionic/vue';
+import { useBackButton, useIonRouter } from '@ionic/vue';
 import {
   IonPage, IonHeader, IonToolbar, IonButton, IonBackButton, IonTitle,
   IonContent, IonCard
@@ -82,14 +82,6 @@ const openDatabase = async () => {
 
 /* app main logic------------------------------------------------ */
 
-
-App.addListener('appStateChange', ({ isActive }) => {
-  if(isActive){
-    checkIsPassNextDay()
-  }
-  //console.log('App state changed. Is active?', isActive);
-});
-
 const dopamines = ref<Dopamine[]>([]);
 //const dopaHistorys = ref<DopaHistory[]>([]);
 const dateToday = ref(new Date());
@@ -99,6 +91,15 @@ let dateIterval: any;
 let historyActive: DopaHistory;
 const dopaCaseActive = ref<Dopamine>();
 const isHistory = ref(false);
+
+App.addListener('appStateChange', ({ isActive }) => {
+  if (isActive) {
+    dateToday.value = new Date()
+    checkIsPassNextDay()
+  }
+  //console.log('App state changed. Is active?', isActive);
+});
+
 
 const dopaDo = async () => {
   historyActive.doCount++
@@ -179,6 +180,7 @@ const dateToString = (date: Date) => {
 }
 
 const setDateIterval = (restMilliSecondsToNextDay: number) => {
+  //return 0;
   // set date check interval
   console.log('set date check intervel')
   if (dateIterval) {
@@ -197,7 +199,8 @@ const setDateIterval = (restMilliSecondsToNextDay: number) => {
 }
 
 const checkIsPassNextDay = async () => {
-  //console.log("new day")
+  console.log("检查是不是同一天")
+  console.log(dateToString(new Date(historyActive.dateTime)),dateToString(dateToday.value))
   if (dateToString(new Date(historyActive.dateTime)) != dateToString(dateToday.value)) {
     console.log('新的一天')
     dateToday.value = new Date()
@@ -233,10 +236,11 @@ const checkIsPassNextDay = async () => {
     await handleUpdateDopamine(dopaCaseActive.value!)
   } else {
     console.log("同一天只更新check intervar，不修改任何当前数据")
+    let milliSecoundsReal = calRestMilliSecondsToNextDay()
+    setDateIterval(milliSecoundsReal)
   }
 
-  let milliSecoundsReal = calRestMilliSecondsToNextDay()
-  setDateIterval(milliSecoundsReal)
+
   console.log('history actualizat set today date')
 
   //getHistoryByDopamineId(dopaCaseActive.value!.id)
