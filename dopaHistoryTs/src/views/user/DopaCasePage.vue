@@ -21,6 +21,7 @@
                 </div>
             </div>
         </ion-modal>
+
     </ChildBaseLayout>
 </template>
 <script lang="ts" setup>
@@ -38,8 +39,10 @@ const close = () => {
     modal.value.$el.dismiss(); 
 }
 const confirm = () => modal.value.$el.dismiss();
-</script>
 
+
+
+</script>
 <style>
 .block {
     width: 100%;
