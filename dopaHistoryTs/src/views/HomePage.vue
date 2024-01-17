@@ -49,6 +49,7 @@ import DopaBarMain from '../components/dopaBar/DopaBarMain.vue'
 import BaseLayout from '@/components/app/BaseLayout.vue';
 //new Date('2024-01-15T23:59:55'),
 import { App } from '@capacitor/app';
+const router = useIonRouter();
 
 
 const dbNameRef = ref('');
@@ -56,13 +57,10 @@ const isInitComplete = ref(false);
 const isDatabase = ref(false);
 const db = ref(null);
 const appInstance = getCurrentInstance();
-
-const router = useIonRouter();
-
 const sqliteServ = appInstance?.appContext.config.globalProperties.$sqliteServ;
 const storageServ = appInstance?.appContext.config.globalProperties.$storageServ;
 
-const dbInitialized = computed(() => !!db.value);
+//const dbInitialized = computed(() => !!db.value);
 const platform = sqliteServ.getPlatform();
 
 
@@ -194,7 +192,6 @@ const setDateIterval = (restMilliSecondsToNextDay: number) => {
     clearInterval(dateIterval)
   }
 
-  let element = this;
   dateIterval = setInterval(function () {
     //console.log('interval')
     dateToday.value = calNextDate(dateToday.value)
@@ -355,6 +352,14 @@ const handleUpdateDopaHistory = async (updDopaHistory: DopaHistory) => {
   }
 };
 
+watch(isHistory, (newIsHistory) => {
+  if (newIsHistory) {
+    console.log("check next day interval")
+    checkIsPassNextDay()
+  }
+
+})
+
 /* end app main logic------------------------------------------------ */
 
 const users = ref<User[]>([]);
@@ -398,9 +403,6 @@ const handleDeleteUser = async (userId: number) => {
 };
 
 
-
-
-
 onMounted(() => {
   const initSubscription = storageServ.isInitCompleted.subscribe(async (value: boolean) => {
     isInitComplete.value = value;
@@ -437,13 +439,7 @@ onBeforeUnmount(() => {
       });
     });
 });
-watch(isHistory, (newIsHistory) => {
-  if (newIsHistory) {
-    console.log("check next day interval")
-    checkIsPassNextDay()
-  }
 
-})
 watch(isDatabase, (newIsDatabase) => {
   if (newIsDatabase) {
     console.log("1-get all dopamines")

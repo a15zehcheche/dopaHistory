@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import indexPage from '../views/indexPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -42,14 +41,6 @@ const routes: Array<RouteRecordRaw> = [
     name: 'dopaCase',
     component: () => import('@/views/user/DopaCasePage.vue'),
 
-  },
-
-  {
-    path: '/pages/',
-    component: indexPage,
-    children: [
-
-    ]
   },
 
 ]
