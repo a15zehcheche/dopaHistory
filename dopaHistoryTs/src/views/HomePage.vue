@@ -86,6 +86,8 @@ const openDatabase = async () => {
 
 /* app main logic------------------------------------------------ */
 
+import { useAppStore } from '@/stores/app'
+const appStore = useAppStore()
 const dopamines = ref<Dopamine[]>([]);
 //const dopaHistorys = ref<DopaHistory[]>([]);
 const dateToday = ref(new Date());
@@ -94,6 +96,7 @@ let nextDate: Date;
 let dateIterval: any;
 let historyActive: DopaHistory;
 const dopaCaseActive = ref<Dopamine>();
+//const dopaCaseActive = appStore.dopaCaseActive
 const isHistory = ref(false);
 
 App.addListener('appStateChange', ({ isActive }) => {
@@ -132,22 +135,22 @@ const passNextday = () => {
   setDateIterval(1)
 }
 const addAllDoCount = async () => {
-  dopaCaseActive.value!.allDoDayCount++
-  await handleUpdateDopamine(dopaCaseActive.value!)
+  dopaCaseActive!.value!.allDoDayCount++
+  await handleUpdateDopamine(dopaCaseActive!.value!)
 }
 const addAllThinkCount = async () => {
-  dopaCaseActive.value!.allThinkDayCount++
-  await handleUpdateDopamine(dopaCaseActive.value!)
+  dopaCaseActive!.value!.allThinkDayCount++
+  await handleUpdateDopamine(dopaCaseActive!.value!)
 }
 
 const checkBestRecord = async (dopaHistory: DopaHistory) => {
-  if (dopaHistory.lastDoDay > dopaCaseActive.value?.recordBestDoDay!) {
-    dopaCaseActive.value!.recordBestDoDay = dopaHistory.lastDoDay
+  if (dopaHistory.lastDoDay > dopaCaseActive?.value!.recordBestDoDay!) {
+    dopaCaseActive!.value!.recordBestDoDay = dopaHistory.lastDoDay
   }
-  if (dopaHistory.lastThinkDay > dopaCaseActive.value?.recordBestThinkDay!) {
-    dopaCaseActive.value!.recordBestThinkDay = dopaHistory.lastThinkDay
+  if (dopaHistory.lastThinkDay > dopaCaseActive?.value!.recordBestThinkDay!) {
+    dopaCaseActive!.value!.recordBestThinkDay = dopaHistory.lastThinkDay
   }
-  await handleUpdateDopamine(dopaCaseActive.value!)
+  await handleUpdateDopamine(dopaCaseActive!.value!)
 }
 const calNextDate = (actualDate: Date) => {
   let nextDatelocal = new Date(actualDate.getTime())
@@ -160,7 +163,7 @@ const calNextDate = (actualDate: Date) => {
 }
 
 const calCountDay = (): number => {
-  let countDay = new Date(dateToString(dateToday.value)).getTime() - new Date(dopaCaseActive.value!.startDate).getTime()
+  let countDay = new Date(dateToString(dateToday.value)).getTime() - new Date(dopaCaseActive!.value!.startDate).getTime()
   countDay = countDay / 86400000
   countDay = parseInt(countDay.toString())
   console.log(countDay)
@@ -213,7 +216,7 @@ const checkIsPassNextDay = async () => {
       let lastThinkDay = historyActive.thinkCount > 0 ? 1 : (historyActive.lastThinkDay + 1)
       const newHistory = ref({
         id: Date.now(),
-        id_dopamine: dopaCaseActive.value!.id,
+        id_dopamine: dopaCaseActive!.value!.id,
         dateTime: dateToString(dateToday.value),
         lastDoDay: lastDoDay,
         lastThinkDay: lastThinkDay,
@@ -223,7 +226,7 @@ const checkIsPassNextDay = async () => {
       let lastId = await handleAddHistory(newHistory.value)
       if (lastId != 0) {
         newHistory.value.id = lastId
-        dopaCaseActive.value!.dopaHistorys!.unshift(newHistory.value);
+        dopaCaseActive!.value!.dopaHistorys!.unshift(newHistory.value);
         historyActive = newHistory.value
       }
       checkBestRecord(newHistory.value)
@@ -235,8 +238,8 @@ const checkIsPassNextDay = async () => {
       console.log('set history active date : ' + dateToString(dateToday.value))
       await handleUpdateDopaHistory(historyActive)
     }
-    dopaCaseActive.value!.daysCount = calCountDay()
-    await handleUpdateDopamine(dopaCaseActive.value!)
+    dopaCaseActive!.value!.daysCount = calCountDay()
+    await handleUpdateDopamine(dopaCaseActive!.value!)
   } else {
     console.log("同一天只更新check intervar，不修改任何当前数据")
     let milliSecoundsReal = calRestMilliSecondsToNextDay()
@@ -246,7 +249,7 @@ const checkIsPassNextDay = async () => {
 
   console.log('history actualizat set today date')
 
-  //getHistoryByDopamineId(dopaCaseActive.value!.id)
+  //getHistoryByDopamineId(dopaCaseActive!.id)
 
 }
 
@@ -277,8 +280,11 @@ const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
     getAllDopamine(db)
   } else {
     console.log("3 - dopamine set dopaCaseActive")
-    dopaCaseActive.value = { ...dopamines.value[0] }
-    await getHistoryByDopamineId(dopaCaseActive.value.id)
+    //dopaCaseActive.value = { ...dopamines.value[0] }
+
+    await appStore.setDopaCase({ ...dopamines.value[0] })
+    dopaCaseActive.value = appStore.getDopaCaseActive()
+    await getHistoryByDopamineId(dopaCaseActive.value!.id)
 
   }
 
@@ -322,10 +328,10 @@ const getHistoryByDopamineId = async (dopamineId: number) => {
   const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
   const values: any[] = [];
   const fetchData = await useQuerySQLite(db, stmt, values);
-  dopaCaseActive.value!.dopaHistorys = fetchData.reverse() as DopaHistory[]
+  dopaCaseActive!.value!.dopaHistorys = fetchData.reverse() as DopaHistory[]
 
-  console.log(dopaCaseActive.value!.dopaHistorys)
-  if (dopaCaseActive.value!.dopaHistorys.length == 0) {
+  console.log(dopaCaseActive!.value!.dopaHistorys)
+  if (dopaCaseActive!.value!.dopaHistorys.length == 0) {
     console.log("5 - not dopaHistorys found creat first dopaHistory")
     let newhistory = {
       id: Date.now(),
@@ -340,8 +346,8 @@ const getHistoryByDopamineId = async (dopamineId: number) => {
     getHistoryByDopamineId(dopamineId)
   } else {
     console.log("6 - set history active")
-    historyActive = dopaCaseActive.value!.dopaHistorys[0]
-    console.log(dopaCaseActive.value)
+    historyActive = dopaCaseActive!.value!.dopaHistorys[0]
+    console.log(dopaCaseActive)
     isHistory.value = true
   }
 };
