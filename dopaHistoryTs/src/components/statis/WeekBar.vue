@@ -1,6 +1,6 @@
 <template>
     <div class="history-bar-week">
-        <div class="day" v-for="day in week.days" :style="dayStyles(day.count)"></div>
+        <div class="day" v-for="day in week.days" :style="dayStyles(day)"></div>
         <div v-if="week.byMonth != -1" class="monthTitle">{{ monthTitle[week.byMonth] }}</div>
     </div>
 </template>
@@ -8,16 +8,39 @@
 import { defineProps, computed } from 'vue'
 const props = defineProps(['week'])
 let monthTitle = ['Jan', 'Fer', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dec']
-const intensityColor = ['#D6E587', '#A8C66F', '#7AA757', '#4B883E', '#1D6926']
-
-
-const dayStyles = (count: number) => {
-    count = count >= 5 ? 4 : count
-    if (count == 0) return {}
-    else return {
-        "background-color": intensityColor[count - 1]
-    }
+const intensityColor = ['#D9D9D9','#D6E587', '#A8C66F', '#7AA757', '#4B883E', '#1D6926']
+import { useMySqliteStore } from '@/stores/sqlite'
+import { Style } from '@capacitor/status-bar';
+const SqliteStore = useMySqliteStore()
+interface day {
+    date: Date
+    count: number
 }
+const convertToTwoDigit = (number: number) => {
+    return number < 10 ? '0' + number.toString() : number.toString();
+}
+const dateToString = (date: Date) => {
+    return `${date.getFullYear()}-${convertToTwoDigit(date.getMonth() + 1)}-${convertToTwoDigit(date.getDate())}`
+}
+
+const dayStyles = (thisDay: day) => {
+    let count = thisDay.count >= 5 ? 4 : thisDay.count
+    if (dateToString(SqliteStore.dateToday) == dateToString(thisDay.date)){
+        return {
+            'box-shadow': '0px 0px 5px 0px rgba(29,105,38,1)',
+            "background-color": intensityColor[count]
+        } 
+    }else{
+        return {
+            "background-color": intensityColor[count]
+        }
+    }
+        
+}
+const todayStile =()=>{
+
+}
+
 </script>
 
 <style lang="less" scoped>
