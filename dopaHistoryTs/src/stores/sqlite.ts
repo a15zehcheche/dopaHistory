@@ -130,7 +130,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
     const values: any[] = [];
     const fetchData = await useQuerySQLite(db, stmt, values);
-    dopaCaseActive!.value!.dopaHistorys = fetchData as DopaHistory[]
+    dopaCaseActive!.value!.dopaHistorys = fetchData.reverse() as DopaHistory[]
 
     //console.log(dopaCaseActive!.value!.dopaHistorys)
     if (dopaCaseActive!.value!.dopaHistorys.length == 0) {
@@ -182,7 +182,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   const convertToTwoDigit = (number: number) => {
     return number < 10 ? '0' + number.toString() : number.toString();
   }
-  
+
   const dateToString = (date: Date) => {
     return `${date.getFullYear()}-${convertToTwoDigit(date.getMonth() + 1)}-${convertToTwoDigit(date.getDate())}`
   }
@@ -194,8 +194,8 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     nextDatelocal.setSeconds(0)
     //console.log(nextDatelocal.toString())
     return nextDatelocal
-  } 
-  
+  }
+
   const calCountDay = (): number => {
     let countDay = new Date(dateToString(dateToday.value)).getTime() - new Date(dopaCaseActive!.value!.startDate).getTime()
     countDay = countDay / 86400000
@@ -213,8 +213,8 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     }
     //-await handleUpdateDopamine(dopaCaseActive!.value!)
   }
-  
-  
+
+
   const calRestMilliSecondsToNextDay = (): number => {
     //calulate next day
     let nextDate = calNextDate(dateToday.value)
@@ -222,7 +222,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     console.log(restMilliSecondsToNextDay)
     return restMilliSecondsToNextDay
   }
-  
+
   let dateIterval: any;
 
   const setDateIterval = (restMilliSecondsToNextDay: number) => {
@@ -232,26 +232,35 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       //console.log('clear old interval')
       clearInterval(dateIterval)
     }
-  
+
     dateIterval = setInterval(function () {
       //console.log('interval')
       dateToday.value = calNextDate(dateToday.value)
       console.log('pass to next date' + dateToday.value.toString())
       checkIsPassNextDay()
     }, restMilliSecondsToNextDay);
-  
+
   }
-  
+  const differenceBetweenDays = (date1: Date, date2: Date) => {
+
+    const diffTime = Math.abs(date2.getTime() - date1.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    //console.log(diffTime + " milliseconds");
+    //console.log(diffDays + " days");
+    return diffDays
+  }
+
   const checkIsPassNextDay = async () => {
     console.log("检查是不是同一天")
     console.log(dateToString(new Date(historyActive.dateTime)), dateToString(dateToday.value))
     if (dateToString(new Date(historyActive.dateTime)) != dateToString(dateToday.value)) {
       console.log('新的一天')
       //dateToday.value = new Date()
+      let dayPast = differenceBetweenDays(dateToday.value, new Date(historyActive.dateTime))
       if (historyActive.doCount > 0 || historyActive.thinkCount > 0) {
         console.log("Creat new Dopa History")
-        let lastDoDay = historyActive.doCount > 0 ? 1 : (historyActive.lastDoDay + 1)
-        let lastThinkDay = historyActive.thinkCount > 0 ? 1 : (historyActive.lastThinkDay + 1)
+        let lastDoDay = historyActive.doCount > 0 ? dayPast : (historyActive.lastDoDay + dayPast)
+        let lastThinkDay = historyActive.thinkCount > 0 ? dayPast : (historyActive.lastThinkDay + dayPast)
         const newHistory = ref({
           id: Date.now(),
           id_dopamine: dopaCaseActive!.value!.id,
@@ -270,8 +279,8 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
         checkBestRecord(newHistory.value)
       } else {
         historyActive.dateTime = dateToString(dateToday.value)
-        historyActive.lastDoDay++;
-        historyActive.lastThinkDay++;
+        historyActive.lastDoDay = dayPast + historyActive.lastDoDay;
+        historyActive.lastThinkDay = dayPast + historyActive.lastThinkDay;
         await checkBestRecord(historyActive)
         console.log('set history active date : ' + dateToString(dateToday.value))
         await handleUpdateDopaHistory(historyActive)
@@ -279,16 +288,18 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       dopaCaseActive!.value!.daysCount = calCountDay()
       await handleUpdateDopamine(dopaCaseActive!.value!)
     } else {
-      console.log("同一天只更新check intervar，不修改任何当前数据")
-      let milliSecoundsReal = calRestMilliSecondsToNextDay()
-      setDateIterval(milliSecoundsReal)
+      console.log("同一天不修改任何当前数据")
+
     }
-  
-  
+    console.log('更新check intervar.')
+    let milliSecoundsReal = calRestMilliSecondsToNextDay()
+    setDateIterval(milliSecoundsReal)
+
+
     console.log('history actualizat set today date')
-  
+
     //getHistoryByDopamineId(dopaCaseActive!.id)
-  
+
   }
 
   //testData check
@@ -301,11 +312,11 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   }
   const passNextday = () => {
     dateToday.value = calNextDate(dateToday.value)
-    console.log(dateToday.value )
+    console.log(dateToday.value)
     checkIsPassNextDay()
   }
-  
-  
+
+
 
   //handle
   const handleAddDopamine = async (newDopamine: Dopamine) => {
@@ -367,8 +378,8 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     await handleUpdateDopamine(dopaCaseActive!.value!)
   }
   return {
-    dateToday,dopamines, dataReady, dopaCaseActive, initConnection, ClearConnection, getAllDopamine,
-    dopaDo, dopaThink,checkIsPassNextDay,getHistory,passNextday
+    dateToday, dopamines, dataReady, dopaCaseActive, initConnection, ClearConnection, getAllDopamine,
+    dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday
   }
 
 })
