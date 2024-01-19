@@ -1,17 +1,17 @@
 <template>
   <base-layout pageTitle="主页">
     <div class="main-body">
-      <app-date-time :dateToday="dateToday"></app-date-time>
-      <dopa-bar-main :dopamines="dopamines"></dopa-bar-main>
-      <dopa-case v-if="dopaCaseActive" :dopamine="dopaCaseActive"></dopa-case>
+      <app-date-time :dateToday="SqliteStore.dateToday"></app-date-time>
+      <dopa-bar-main :dopamines="SqliteStore.dopamines"></dopa-bar-main>
+      <dopa-case v-if="SqliteStore.dopaCaseActive" :dopamine="SqliteStore.dopaCaseActive"></dopa-case>
 
       <div class="action-btn-box">
         <ion-button color="danger" @click="dopaDo">Do</ion-button>
         <ion-button color="warning" @click="dopaThink">Think</ion-button>
-        <!--ion-button color="primary" @click="passNextday">next day</ion-button>
-      <ion-button color="primary" @click="getHistory(dopaCaseActive!.id)">get history</ion-button>
-      <ion-button color="primary" @click="textBtn">test</ion-button-->
-       
+        <ion-button v-if="AppStore.testMode "  color="primary" @click="passNextday">next day</ion-button>
+      <ion-button v-if="AppStore.testMode " color="primary" @click="SqliteStore.getHistory(dopaCaseActive!.id)">get history</ion-button>
+      <ion-button v-if="AppStore.testMode " color="primary" @click="textBtn">test</ion-button>
+
 
       </div>
       <!--user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list-->
@@ -21,13 +21,13 @@
 </template>
   
 <script lang="ts" setup>
-const toSetting =()=>{
-    router.push('/setting')
+const toSetting = () => {
+  router.push('/setting')
 }
 
 import {
   defineComponent, ref, computed, getCurrentInstance, onMounted,
-  onBeforeUnmount, watch, Ref
+  onBeforeUnmount, watch, Ref,toRefs
 } from 'vue';
 import { useBackButton, useIonRouter } from '@ionic/vue';
 import {
@@ -52,97 +52,71 @@ import { App } from '@capacitor/app';
 const router = useIonRouter();
 
 
-const dbNameRef = ref('');
-const isInitComplete = ref(false);
-const isDatabase = ref(false);
-const db = ref(null);
-const appInstance = getCurrentInstance();
-const sqliteServ = appInstance?.appContext.config.globalProperties.$sqliteServ;
-const storageServ = appInstance?.appContext.config.globalProperties.$storageServ;
 
-//const dbInitialized = computed(() => !!db.value);
-const platform = sqliteServ.getPlatform();
-
-
-
-const openDatabase = async () => {
-  try {
-    const dbUsersName = storageServ.getDatabaseName();
-    dbNameRef.value = dbUsersName;
-    const version = storageServ.getDatabaseVersion();
-
-    const database = await sqliteServ.openDatabase(dbUsersName, version, false);
-    db.value = database;
-    isDatabase.value = true;
-  } catch (error) {
-    const msg = `Error open database: ${error}`;
-    console.error(msg);
-    Toast.show({
-      text: msg,
-      duration: 'long'
-    });
-  }
-};
 
 /* app main logic------------------------------------------------ */
 
+import { useMySqliteStore } from '@/stores/sqlite'
+const SqliteStore = useMySqliteStore()
+const { dataReady, dopaCaseActive } = toRefs(SqliteStore)
 import { useAppStore } from '@/stores/app'
-const appStore = useAppStore()
-const dopamines = ref<Dopamine[]>([]);
-//const dopaHistorys = ref<DopaHistory[]>([]);
-const dateToday = ref(new Date());
-let nextDate: Date;
+const AppStore = useAppStore()
+
+
+
 //let restMilliSecondsToNextDay: number;
 let dateIterval: any;
+
+
+
+//-----------------obsolet-----------------------
+let nextDate: Date;
+const dopamines = ref<Dopamine[]>([]);
+//const dopaHistorys = ref<DopaHistory[]>([]);
 let historyActive: DopaHistory;
-const dopaCaseActive = ref<Dopamine>();
+//const dopaCaseActive = ref<Dopamine>();
 //const dopaCaseActive = appStore.dopaCaseActive
-const isHistory = ref(false);
+
+//-----------------------------------------
+
 
 App.addListener('appStateChange', ({ isActive }) => {
-  if (isActive) {
-    dateToday.value = new Date()
-    checkIsPassNextDay()
+  if (isActive && !AppStore.testMode ) {
+      SqliteStore.dateToday = new Date()
+      SqliteStore.checkIsPassNextDay()
   }
   //console.log('App state changed. Is active?', isActive);
 });
 
 
 const dopaDo = async () => {
-  historyActive.doCount++
-  if (historyActive.thinkCount == 0) {
-    //if do, think +1
-    historyActive.thinkCount++
-    await addAllThinkCount()
-  }
-  await handleUpdateDopaHistory(historyActive)
-  addAllDoCount()
-  //console.log("do ++")
+  SqliteStore.dopaDo()
 }
 
 const dopaThink = async () => {
-  historyActive.thinkCount++
-  await handleUpdateDopaHistory(historyActive)
-  addAllThinkCount()
-  //console.log("think ++")
+  SqliteStore.dopaThink()
 }
+
+
 const textBtn = () => {
-  calCountDay()
-  //console.log(historyActive)
+  console.log(SqliteStore.dateToday)
 }
 const passNextday = () => {
   console.log('to next day')
-  setDateIterval(1)
-}
-const addAllDoCount = async () => {
-  dopaCaseActive!.value!.allDoDayCount++
-  await handleUpdateDopamine(dopaCaseActive!.value!)
-}
-const addAllThinkCount = async () => {
-  dopaCaseActive!.value!.allThinkDayCount++
-  await handleUpdateDopamine(dopaCaseActive!.value!)
+  SqliteStore.passNextday()
+  
+ 
 }
 
+watch(dataReady, (newIsHistory) => {
+  if (newIsHistory && !AppStore.testMode) {
+    console.log("check next day interval")
+    SqliteStore.checkIsPassNextDay()
+  }
+})
+
+
+/*
 const checkBestRecord = async (dopaHistory: DopaHistory) => {
   if (dopaHistory.lastDoDay > dopaCaseActive?.value!.recordBestDoDay!) {
     dopaCaseActive!.value!.recordBestDoDay = dopaHistory.lastDoDay
@@ -150,7 +124,7 @@ const checkBestRecord = async (dopaHistory: DopaHistory) => {
   if (dopaHistory.lastThinkDay > dopaCaseActive?.value!.recordBestThinkDay!) {
     dopaCaseActive!.value!.recordBestThinkDay = dopaHistory.lastThinkDay
   }
-  await handleUpdateDopamine(dopaCaseActive!.value!)
+  //-await handleUpdateDopamine(dopaCaseActive!.value!)
 }
 const calNextDate = (actualDate: Date) => {
   let nextDatelocal = new Date(actualDate.getTime())
@@ -161,6 +135,17 @@ const calNextDate = (actualDate: Date) => {
   //console.log(nextDatelocal.toString())
   return nextDatelocal
 }
+
+
+
+const convertToTwoDigit = (number: number) => {
+  return number < 10 ? '0' + number.toString() : number.toString();
+}
+
+const dateToString = (date: Date) => {
+  return `${date.getFullYear()}-${convertToTwoDigit(date.getMonth() + 1)}-${convertToTwoDigit(date.getDate())}`
+}
+
 
 const calCountDay = (): number => {
   let countDay = new Date(dateToString(dateToday.value)).getTime() - new Date(dopaCaseActive!.value!.startDate).getTime()
@@ -178,18 +163,9 @@ const calRestMilliSecondsToNextDay = (): number => {
   return restMilliSecondsToNextDay
 }
 
-const convertToTwoDigit = (number: number) => {
-  return number < 10 ? '0' + number.toString() : number.toString();
-}
-
-const dateToString = (date: Date) => {
-  return `${date.getFullYear()}-${convertToTwoDigit(date.getMonth() + 1)}-${convertToTwoDigit(date.getDate())}`
-}
-
 const setDateIterval = (restMilliSecondsToNextDay: number) => {
-  //return 0;
   // set date check interval
-  console.log('set date check intervel')
+  //console.log('set date check intervel')
   if (dateIterval) {
     //console.log('clear old interval')
     clearInterval(dateIterval)
@@ -203,6 +179,7 @@ const setDateIterval = (restMilliSecondsToNextDay: number) => {
   }, restMilliSecondsToNextDay);
 
 }
+
 
 const checkIsPassNextDay = async () => {
   console.log("检查是不是同一天")
@@ -253,7 +230,7 @@ const checkIsPassNextDay = async () => {
 
 }
 
-
+/*
 
 // dopamine handle api-----------------------------------------------
 
@@ -275,15 +252,16 @@ const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
       allDoDayCount: 0,
       allThinkDayCount: 0,
       daysCount: 0,
+      dopaHistorys: []
     };
     await handleAddDopamine(newDapamine)
     getAllDopamine(db)
   } else {
     console.log("3 - dopamine set dopaCaseActive")
-    //dopaCaseActive.value = { ...dopamines.value[0] }
+    dopaCaseActive.value = { ...dopamines.value[0] }
 
-    await appStore.setDopaCase({ ...dopamines.value[0] })
-    dopaCaseActive.value = appStore.getDopaCaseActive()
+    //await appStore.setDopaCase({ ...dopamines.value[0] })
+    //dopaCaseActive.value = appStore.getDopaCaseActive()
     await getHistoryByDopamineId(dopaCaseActive.value!.id)
 
   }
@@ -316,6 +294,12 @@ const handleAddHistory = async (newHistory: DopaHistory): Promise<number> => {
   }
   return 0
 };
+const handleUpdateDopaHistory = async (updDopaHistory: DopaHistory) => {
+  if (db.value) {
+    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+    await storageServ.updateHistoryById(updDopaHistory);
+  }
+};
 const getHistory = async (dopamineId: number) => {
   console.log('4 - get Dopa history by id :' + dopamineId)
   const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
@@ -323,15 +307,20 @@ const getHistory = async (dopamineId: number) => {
   const fetchData = await useQuerySQLite(db, stmt, values);
   console.log(fetchData)
 }
+
 const getHistoryByDopamineId = async (dopamineId: number) => {
   console.log('4 - get Dopa history by id :' + dopamineId)
   const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
   const values: any[] = [];
   const fetchData = await useQuerySQLite(db, stmt, values);
   dopaCaseActive!.value!.dopaHistorys = fetchData.reverse() as DopaHistory[]
-
   console.log(dopaCaseActive!.value!.dopaHistorys)
-  if (dopaCaseActive!.value!.dopaHistorys.length == 0) {
+  creatHistory(dopaCaseActive.value!,dopamineId)
+  
+};
+
+const creatHistory = async (dopaCaseActive:Dopamine,dopamineId: number) => {
+  if (dopaCaseActive.dopaHistorys!.length == 0) {
     console.log("5 - not dopaHistorys found creat first dopaHistory")
     let newhistory = {
       id: Date.now(),
@@ -346,69 +335,19 @@ const getHistoryByDopamineId = async (dopamineId: number) => {
     getHistoryByDopamineId(dopamineId)
   } else {
     console.log("6 - set history active")
-    historyActive = dopaCaseActive!.value!.dopaHistorys[0]
+    historyActive = dopaCaseActive.dopaHistorys![0]
     console.log(dopaCaseActive)
     isHistory.value = true
   }
-};
-const handleUpdateDopaHistory = async (updDopaHistory: DopaHistory) => {
-  if (db.value) {
-    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
-    await storageServ.updateHistoryById(updDopaHistory);
-  }
-};
+}
 
-watch(isHistory, (newIsHistory) => {
-  if (newIsHistory) {
-    console.log("check next day interval")
-    checkIsPassNextDay()
-  }
 
-})
+
+*/
 
 /* end app main logic------------------------------------------------ */
 
-const users = ref<User[]>([]);
-
-const getAllUsers = async (db: Ref<SQLiteDBConnection | null>) => {
-  const stmt = 'SELECT * FROM users';
-  const values: any[] = [];
-  const fetchData = await useQuerySQLite(db, stmt, values);
-  users.value = fetchData;
-
-}
-const handleAddUser = async (newUser: User) => {
-  if (db.value) {
-    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
-    const lastId = await storageServ.addUser(newUser);
-    newUser.id = lastId;
-    users.value.push(newUser as never);
-  }
-};
-const handleUpdateUser = async (updUser: User) => {
-  if (db.value) {
-    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
-    await storageServ.updateUserById(updUser.id.toString(), updUser.active);
-    users.value = users.value.map((user: User) => {
-      if (user.id === updUser.id) {
-        // Clone the user and update the active property
-        return { ...user, active: updUser.active };
-      } else {
-        return user;
-      }
-    });
-  }
-};
-
-const handleDeleteUser = async (userId: number) => {
-  if (db.value) {
-    const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
-    await storageServ.deleteUserById(userId.toString());
-    users.value = users.value.filter(user => (user as User).id !== userId);
-  }
-};
-
-
+/*
 onMounted(() => {
   const initSubscription = storageServ.isInitCompleted.subscribe(async (value: boolean) => {
     isInitComplete.value = value;
@@ -445,14 +384,15 @@ onBeforeUnmount(() => {
       });
     });
 });
+*/
 
-watch(isDatabase, (newIsDatabase) => {
+watch(ref(), (newIsDatabase) => {
   if (newIsDatabase) {
     console.log("1-get all dopamines")
     /*getAllUsers(db).then(() => {
 
     })*/
-    getAllDopamine(db).then(() => {
+    /*getAllDopamine(db).then(() => {
     }).catch((error: any) => {
       const msg = `close database:
                           ${error.message ? error.message : error}`;
@@ -461,7 +401,7 @@ watch(isDatabase, (newIsDatabase) => {
         text: msg,
         duration: 'long'
       });
-    });
+    });*/
   } else {
     const msg = `newDb is null`;
     console.error(msg);
@@ -473,13 +413,6 @@ watch(isDatabase, (newIsDatabase) => {
 });
 
 
-/* return {
-   isInitComplete, dbInitialized, users, handleAddUser,
-   handleUpdateUser, handleDeleteUser,
-   dopamines, dopaHistorys, dateToday,
-   dateToString, handleAddHistory, handleUpdateDopaHistory,
-   dopaDo,dopaThink
- }*/
 
 </script>
 <style scoped>

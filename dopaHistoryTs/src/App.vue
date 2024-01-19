@@ -14,6 +14,7 @@ import { Toast } from '@capacitor/toast';
 import { useMySqliteStore } from '@/stores/sqlite'
 const SqliteStore = useMySqliteStore()
 
+
 onMounted(() => {
   SqliteStore.initConnection()
 });

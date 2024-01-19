@@ -2,16 +2,18 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue';
 import { Dopamine } from '@/models/Dopamine';
 import { DopaHistory } from '@/models/DopaHistory';
+interface day {
+    date: Date
+    count: number
+}
+interface week {
+    byMonth: Number
+    days: day[]
+}
 
 export const useAppStore = defineStore('app', () => {
-    const dopaCaseActive = ref<Dopamine>();
-    const name = ref('Eduardo')
-    const setDopaCase = async (dopacase: Dopamine) => {
-        dopaCaseActive.value = dopacase
-        //console.log('data recive',dopaCaseActive.value)
-    }
-    const getDopaCaseActive = () => {
-        return dopaCaseActive.value
-    }
-    return { dopaCaseActive, setDopaCase, getDopaCaseActive }
+    const weekList = ref<week[]>([])
+    const testMode = ref(false);
+
+    return { weekList, testMode }
 })
