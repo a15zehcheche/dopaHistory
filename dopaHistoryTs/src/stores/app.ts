@@ -4,7 +4,7 @@ import { Dopamine } from '@/models/Dopamine';
 import { DopaHistory } from '@/models/DopaHistory';
 interface day {
     date: Date
-    count: number
+    count: Object
 }
 interface week {
     byMonth: Number

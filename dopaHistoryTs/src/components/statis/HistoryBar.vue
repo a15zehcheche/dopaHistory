@@ -31,7 +31,10 @@ const numDays = (y: number, m: number) => new Date(y, m, 0).getDate();
 
 interface day {
     date: Date
-    count: number
+    count: {
+        do:number
+        think:number
+    }
 }
 interface week {
     byMonth: Number
@@ -85,11 +88,15 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
             if (dateInit.getDate() == 1) monthNumber = dateInit.getMonth()
 
             //把数据放上去
-            let frequencyCount = 0
+            let frequencyCount = {
+                do:0,
+                think:0
+            }
             if (historyQueue!.length > actualQueueIndex && dateInit.getTime() == new Date(historyQueue![actualQueueIndex].dateTime).getTime()
             ) {
 
-                frequencyCount = historyQueue![actualQueueIndex].doCount + historyQueue![actualQueueIndex].thinkCount
+                frequencyCount.do = historyQueue![actualQueueIndex].doCount 
+                frequencyCount.think = historyQueue![actualQueueIndex].thinkCount
                 actualQueueIndex++
                 console.log('push data',frequencyCount)
             }

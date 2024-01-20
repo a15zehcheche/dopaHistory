@@ -8,13 +8,17 @@
 import { defineProps, computed } from 'vue'
 const props = defineProps(['week'])
 let monthTitle = ['Jan', 'Fer', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dec']
-const intensityColor = ['#D9D9D9','#D6E587', '#A8C66F', '#7AA757', '#4B883E', '#1D6926']
+const thinkColor =['#F1D7AB','#F2CB89','#F3BF67','#F4B245','#F5A623']
+const doColor = ['#F1ABAB','#F28989','#F36767','#F44545','#F52323']
 import { useMySqliteStore } from '@/stores/sqlite'
 import { Style } from '@capacitor/status-bar';
 const SqliteStore = useMySqliteStore()
 interface day {
     date: Date
-    count: number
+    count: {
+        do: number
+        think: number
+    }
 }
 const convertToTwoDigit = (number: number) => {
     return number < 10 ? '0' + number.toString() : number.toString();
@@ -24,20 +28,28 @@ const dateToString = (date: Date) => {
 }
 
 const dayStyles = (thisDay: day) => {
-    let count = thisDay.count > 5 ? 5 : thisDay.count
-    if (dateToString(SqliteStore.dateToday) == dateToString(thisDay.date)){
+    let doCount = thisDay.count.do > 4 ? 4 : thisDay.count.do
+    let thinkCount = thisDay.count.think > 4 ? 4 : thisDay.count.think
+    let dgColor = '#D9D9D9'
+    if (doCount > 0) {
+        dgColor = doColor[doCount];
+    } else if (thinkCount > 0) {
+        dgColor = thinkColor[thinkCount];
+    }
+
+    if (dateToString(SqliteStore.dateToday) == dateToString(thisDay.date)) {
         return {
-            'box-shadow': '0px 0px 5px 0px rgba(29,105,38,1)',
-            "background-color": intensityColor[count]
-        } 
-    }else{
+            'box-shadow': '0px 0px 5px 0px rgba(100,100,100,1)',
+            "background-color": dgColor
+        }
+    } else {
         return {
-            "background-color": intensityColor[count]
+            "background-color": dgColor
         }
     }
-        
+
 }
-const todayStile =()=>{
+const todayStile = () => {
 
 }
 
