@@ -24,7 +24,7 @@ const dateToString = (date: Date) => {
 }
 
 const dayStyles = (thisDay: day) => {
-    let count = thisDay.count >= 5 ? 4 : thisDay.count
+    let count = thisDay.count > 5 ? 5 : thisDay.count
     if (dateToString(SqliteStore.dateToday) == dateToString(thisDay.date)){
         return {
             'box-shadow': '0px 0px 5px 0px rgba(29,105,38,1)',

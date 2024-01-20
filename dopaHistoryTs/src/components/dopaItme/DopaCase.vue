@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import BetweenItem from './BetweenItem.vue';
 import StartItme from './StartItme.vue';
-import { defineComponent, ref, Ref, watch,defineProps } from 'vue'
+import { defineComponent, ref, Ref, watch, defineProps } from 'vue'
 import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { useQuerySQLite } from '@/hooks/UseQuerySQLite';
 
@@ -48,6 +48,8 @@ console.log(props)
     display: flex;
     justify-content: space-between;
     padding: 10px;
+    height: 40px;
+    align-items: center;
 }
 
 .history-box {

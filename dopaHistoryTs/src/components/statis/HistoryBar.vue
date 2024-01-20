@@ -38,12 +38,13 @@ interface week {
     days: day[]
 }
 
+
 const weekList = ref<week[]>([])
 
 
 
-
 const buildWeekList = (dopaCaseActiveF: Dopamine) => {
+    weekList.value = []
     //拿到dopacase 的起始和最后history的日期
     let dateInit = new Date(dopaCaseActiveF.startDate!)
     let dateFin = new Date(dopaCaseActiveF.dopaHistorys![0].dateTime)
@@ -87,10 +88,10 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
             let frequencyCount = 0
             if (historyQueue!.length > actualQueueIndex && dateInit.getTime() == new Date(historyQueue![actualQueueIndex].dateTime).getTime()
             ) {
-                
+
                 frequencyCount = historyQueue![actualQueueIndex].doCount + historyQueue![actualQueueIndex].thinkCount
                 actualQueueIndex++
-                //console.log('push data',frequencyCount)
+                console.log('push data',frequencyCount)
             }
 
             tepmDays.push({

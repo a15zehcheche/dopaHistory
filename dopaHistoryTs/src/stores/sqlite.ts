@@ -90,11 +90,12 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
 
   //my app variables
 
-  const dopaCaseActive = ref<Dopamine>()
+  const dopaCaseActive = ref<Dopamine>();
   const dataReady = ref(false);
   const dopamines = ref<Dopamine[]>([]);
   let historyActive: DopaHistory;
   const dateToday = ref<Date>(new Date());
+  const selectedDopaCaseSegment = ref<any>(null);
 
   const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
     const stmt = 'SELECT * FROM dopamine';
@@ -119,7 +120,8 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       await getAllDopamine(db)
     } else {
       console.log("3 - dopamine set dopaCaseActive")
-      dopaCaseActive.value = { ...dopamines.value[0] }
+      let DopaActiveId = selectedDopaCaseSegment.value ? selectedDopaCaseSegment.value.replace("d", '') : 1
+      dopaCaseActive.value = dopamines.value.find((element) => element.id == DopaActiveId);
       await getHistoryByDopamineId(dopaCaseActive.value!.id)
 
     }
@@ -137,7 +139,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       console.log("5 - not dopaHistorys found creat first dopaHistory")
       let newhistory = {
         id: Date.now(),
-        id_dopamine: 1,
+        id_dopamine: dopaCaseActive.value!.id,
         dateTime: dateToString(new Date()),
         lastDoDay: 0,
         lastThinkDay: 0,
@@ -158,7 +160,13 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   watch(isDatabase, (newIsDatabase) => {
     if (newIsDatabase) {
       console.log("App db ready")
+      //console.log('locastorage : ', localStorage.getItem("selectedDopaCaseSegment"))
+      selectedDopaCaseSegment.value = localStorage.getItem("selectedDopaCaseSegment")
+      if (selectedDopaCaseSegment.value == null) localStorage.setItem("selectedDopaCaseSegment", "d1");
+
       getAllDopamine(db).then(() => {
+
+
       }).catch((error: any) => {
         const msg = `close database:
                             ${error.message ? error.message : error}`;
@@ -319,6 +327,14 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
 
 
   //handle
+  const handleDeleteDopamine = async (id: number) => {
+    if (db.value) {
+      await handleDeleteHistoryByDopamineId(id)
+      const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+      const lastId = await storageServ.deleteDopamineById(id);
+      dopamines.value = dopamines.value.filter(dopamine => (dopamine as Dopamine).id !== id);
+    }
+  };
   const handleAddDopamine = async (newDopamine: Dopamine) => {
     if (db.value) {
       const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
@@ -333,6 +349,13 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       await storageServ.updateDopamine(updDopamine);
     }
   };
+  const handleDeleteHistoryByDopamineId = async (id: number) => {
+    if (db.value) {
+      const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+      const lastId = await storageServ.deleteHistoryByDopamineId(id);
+    }
+  };
+
   const handleAddHistory = async (newHistory: DopaHistory): Promise<number> => {
     if (db.value) {
       const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
@@ -377,8 +400,15 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     dopaCaseActive!.value!.allThinkDayCount++
     await handleUpdateDopamine(dopaCaseActive!.value!)
   }
+  const setDopaCaseActive = async (dopaId: number) => {
+    dopaCaseActive.value = dopamines.value.find((element) => element.id == dopaId);
+    await getHistoryByDopamineId(dopaCaseActive.value!.id)
+    checkIsPassNextDay()
+  }
   return {
-    dateToday, dopamines, dataReady, dopaCaseActive, initConnection, ClearConnection, getAllDopamine,
+    dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment,
+    initConnection, ClearConnection,
+    getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine,
     dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday
   }
 

@@ -91,7 +91,7 @@ class StorageService implements IStorageService {
     }
     async addDopamine(dopamine: Dopamine): Promise<number> {
         const sql = `INSERT INTO dopamine (name,startDate) VALUES (?,?);`;
-        const res = await this.db.run(sql, [dopamine.name,dopamine.startDate]);
+        const res = await this.db.run(sql, [dopamine.name, dopamine.startDate]);
         if (res.changes !== undefined
             && res.changes.lastId !== undefined && res.changes.lastId > 0) {
             return res.changes.lastId;
@@ -99,7 +99,8 @@ class StorageService implements IStorageService {
             throw new Error(`storageService.addUser: lastId not returned`);
         }
     }
-    async updateDopamine(dopamine:Dopamine): Promise<void> {
+
+    async updateDopamine(dopamine: Dopamine): Promise<void> {
         const sql = `UPDATE dopamine SET
         name="${dopamine.name} ",
         recordBestThinkDay="${dopamine.recordBestThinkDay} ",
@@ -112,13 +113,17 @@ class StorageService implements IStorageService {
         //console.log(sql)
         await this.db.run(sql);
     }
+    async deleteDopamineById(id: string): Promise<void> {
+        const sql = `DELETE FROM dopamine WHERE id=${id}`;
+        await this.db.run(sql);
+    }
 
     //history sql
-    async getHistoryByDopamineId(id:number): Promise<DopaHistory[]> {
+    async getHistoryByDopamineId(id: number): Promise<DopaHistory[]> {
         const sql = `SELECT * FROM history WHERE id_dopamine=${id} ORDER by date(datetime) DESC`;
         return (await this.db.query(sql)).values as DopaHistory[];
     }
-    
+
     async addDopaHistory(newHistory: DopaHistory): Promise<number> {
         const sql = `INSERT INTO history (id_dopamine,datetime,doCount,thinkCount,lastDoDay,lastThinkDay) VALUES (${newHistory.id_dopamine},"${newHistory.dateTime}",${newHistory.doCount},${newHistory.thinkCount},${newHistory.lastDoDay},${newHistory.lastThinkDay});`;
         console.log(sql)
@@ -137,9 +142,10 @@ class StorageService implements IStorageService {
             throw new Error(`storageService.addUser: lastId not returned`);
         }
     }
-    async updateHistoryById(history:DopaHistory): Promise<void> {
+
+    async updateHistoryById(history: DopaHistory): Promise<void> {
         const sql = `UPDATE history SET 
-        dateTime="${history.dateTime} ",
+        dateTime="${history.dateTime}",
         doCount=${history.doCount} ,
         thinkCount=${history.thinkCount} ,
         lastDoDay=${history.lastDoDay} ,
@@ -148,8 +154,12 @@ class StorageService implements IStorageService {
         //console.log(sql)
         await this.db.run(sql);
     }
-    
-    
+    async deleteHistoryByDopamineId(id: string): Promise<void> {
+        const sql = `DELETE FROM history WHERE id_dopamine=${id}`;
+        await this.db.run(sql);
+    }
+
+
 
 }
 export default StorageService;
