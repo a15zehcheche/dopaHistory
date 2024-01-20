@@ -120,7 +120,8 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       await getAllDopamine(db)
     } else {
       console.log("3 - dopamine set dopaCaseActive")
-      let DopaActiveId = selectedDopaCaseSegment.value ? selectedDopaCaseSegment.value.replace("d", '') : 1
+      selectedDopaCaseSegment.value = selectedDopaCaseSegment.value ? selectedDopaCaseSegment.value : 'd1'
+      let DopaActiveId = selectedDopaCaseSegment.value.replace("d", '')
       dopaCaseActive.value = dopamines.value.find((element) => element.id == DopaActiveId);
       await getHistoryByDopamineId(dopaCaseActive.value!.id)
 
