@@ -102,13 +102,13 @@ class StorageService implements IStorageService {
 
     async updateDopamine(dopamine: Dopamine): Promise<void> {
         const sql = `UPDATE dopamine SET
-        name="${dopamine.name} ",
-        recordBestThinkDay="${dopamine.recordBestThinkDay} ",
-        recordBestDoDay="${dopamine.recordBestThinkDay} ",
-        allDoDayCount="${dopamine.allDoDayCount} ",
-        allThinkDayCount="${dopamine.allThinkDayCount} ",
-        daysCount="${dopamine.daysCount} ",
-        startDate="${dopamine.startDate} " 
+        name="${dopamine.name}",
+        recordBestThinkDay="${dopamine.recordBestThinkDay}",
+        recordBestDoDay="${dopamine.recordBestThinkDay}",
+        allDoDayCount="${dopamine.allDoDayCount}",
+        allThinkDayCount="${dopamine.allThinkDayCount}",
+        daysCount="${dopamine.daysCount}",
+        startDate="${dopamine.startDate}" 
         WHERE id=${dopamine.id}`;
         //console.log(sql)
         await this.db.run(sql);
@@ -146,9 +146,9 @@ class StorageService implements IStorageService {
     async updateHistoryById(history: DopaHistory): Promise<void> {
         const sql = `UPDATE history SET 
         dateTime="${history.dateTime}",
-        doCount=${history.doCount} ,
-        thinkCount=${history.thinkCount} ,
-        lastDoDay=${history.lastDoDay} ,
+        doCount=${history.doCount},
+        thinkCount=${history.thinkCount},
+        lastDoDay=${history.lastDoDay},
         lastThinkDay=${history.lastThinkDay} 
         WHERE id=${history.id}`;
         //console.log(sql)

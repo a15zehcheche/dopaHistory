@@ -2,15 +2,16 @@
   <base-layout pageTitle="主页">
     <div class="main-body">
       <app-date-time :dateToday="SqliteStore.dateToday"></app-date-time>
-      <dopa-bar-main ></dopa-bar-main>
+      <dopa-bar-main></dopa-bar-main>
       <dopa-case v-if="SqliteStore.dopaCaseActive" :dopamine="SqliteStore.dopaCaseActive"></dopa-case>
 
       <div class="action-btn-box">
         <ion-button color="danger" @click="dopaDo">Do</ion-button>
         <ion-button color="warning" @click="dopaThink">Think</ion-button>
-        <ion-button v-if="AppStore.testMode "  color="primary" @click="passNextday">next day</ion-button>
-      <ion-button v-if="AppStore.testMode " color="primary" @click="SqliteStore.getHistory(dopaCaseActive!.id)">get history</ion-button>
-      <ion-button v-if="AppStore.testMode " color="primary" @click="textBtn">test</ion-button>
+        <ion-button v-if="AppStore.testMode" color="primary" @click="passNextday">next day</ion-button>
+        <ion-button v-if="AppStore.testMode" color="primary" @click="SqliteStore.getHistory(dopaCaseActive!.id)">get
+          history</ion-button>
+        <ion-button v-if="AppStore.testMode" color="primary" @click="textBtn">test</ion-button>
 
 
       </div>
@@ -27,7 +28,7 @@ const toSetting = () => {
 
 import {
   defineComponent, ref, computed, getCurrentInstance, onMounted,
-  onBeforeUnmount, watch, Ref,toRefs
+  onBeforeUnmount, watch, Ref, toRefs
 } from 'vue';
 import { useBackButton, useIonRouter } from '@ionic/vue';
 import {
@@ -47,7 +48,6 @@ import DopaCase from '../components/dopaItme/DopaCase.vue'
 import DopaBarMain from '../components/dopaBar/DopaBarMain.vue'
 import BaseLayout from '@/components/app/BaseLayout.vue';
 //new Date('2024-01-15T23:59:55'),
-import { App } from '@capacitor/app';
 const router = useIonRouter();
 
 
@@ -63,13 +63,6 @@ const AppStore = useAppStore()
 
 
 
-App.addListener('appStateChange', ({ isActive }) => {
-  if (isActive && !AppStore.testMode ) {
-      SqliteStore.dateToday = new Date()
-      SqliteStore.checkIsPassNextDay()
-  }
-  //console.log('App state changed. Is active?', isActive);
-});
 
 
 const dopaDo = async () => {
@@ -87,13 +80,13 @@ const textBtn = () => {
 const passNextday = () => {
   console.log('to next day')
   SqliteStore.passNextday()
-  
- 
+
+
 }
 
 watch(dataReady, (newIsHistory) => {
-  if (newIsHistory && !AppStore.testMode) {
-    console.log("check next day interval")
+  if (newIsHistory) {
+    console.log("Whatch check next day interval")
     SqliteStore.checkIsPassNextDay()
   }
 })

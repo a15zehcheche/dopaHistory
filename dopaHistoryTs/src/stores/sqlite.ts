@@ -232,17 +232,15 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     return restMilliSecondsToNextDay
   }
 
-  let dateIterval: any;
+  const dateIterval = ref<any>();
 
   const setDateIterval = (restMilliSecondsToNextDay: number) => {
     // set date check interval
     //console.log('set date check intervel')
-    if (dateIterval) {
-      //console.log('clear old interval')
-      clearInterval(dateIterval)
-    }
 
-    dateIterval = setInterval(function () {
+    clearInterval(dateIterval.value)
+
+    dateIterval.value = setInterval(function () {
       //console.log('interval')
       dateToday.value = calNextDate(dateToday.value)
       console.log('pass to next date' + dateToday.value.toString())
@@ -260,12 +258,13 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   }
 
   const checkIsPassNextDay = async () => {
-    console.log("检查是不是同一天")
+    console.log("---------check is same day--------")
+    dateToday.value = new Date()
     console.log(dateToString(new Date(historyActive.dateTime)), dateToString(dateToday.value))
     if (dateToString(new Date(historyActive.dateTime)) != dateToString(dateToday.value)) {
       console.log('新的一天')
-      //dateToday.value = new Date()
-      let dayPast = differenceBetweenDays(dateToday.value, new Date(historyActive.dateTime))
+      let dayPast = differenceBetweenDays(new Date(dateToString(dateToday.value)), new Date(historyActive.dateTime))
+      console.log('pass day :', dayPast)
       if (historyActive.doCount > 0 || historyActive.thinkCount > 0) {
         console.log("Creat new Dopa History")
         let lastDoDay = historyActive.doCount > 0 ? dayPast : (historyActive.lastDoDay + dayPast)
@@ -291,7 +290,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
         historyActive.lastDoDay = dayPast + historyActive.lastDoDay;
         historyActive.lastThinkDay = dayPast + historyActive.lastThinkDay;
         await checkBestRecord(historyActive)
-        console.log('set history active date : ' + dateToString(dateToday.value))
+
         await handleUpdateDopaHistory(historyActive)
       }
       dopaCaseActive!.value!.daysCount = calCountDay()
@@ -300,7 +299,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       console.log("同一天不修改任何当前数据")
 
     }
-    console.log('更新check intervar.')
+    console.log('更新check intervar.',dateIterval.value)
     let milliSecoundsReal = calRestMilliSecondsToNextDay()
     setDateIterval(milliSecoundsReal)
 

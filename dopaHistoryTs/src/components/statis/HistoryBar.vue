@@ -49,6 +49,7 @@ const weekList = ref<week[]>([])
 const buildWeekList = (dopaCaseActiveF: Dopamine) => {
     weekList.value = []
     //拿到dopacase 的起始和最后history的日期
+    console.log(dopaCaseActiveF)
     let dateInit = new Date(dopaCaseActiveF.startDate!)
     let dateFin = new Date(dopaCaseActiveF.dopaHistorys![0].dateTime)
     //把起始日期设置到1号，把最后history的日期设置成年的最后一天

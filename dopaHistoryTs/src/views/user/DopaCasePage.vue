@@ -24,7 +24,7 @@
         <ion-list lines="full" class="dopa-case-list">
             <ion-item v-for="dopamine in SqliteStore.dopamines" class="list-item">
                 <ion-label class="laber"> {{ dopamine.name }}</ion-label>
-                <ion-icon aria-hidden="true" size="small" icon="assets/pen-circle.svg" />
+                <ion-icon aria-hidden="true" size="small" id="open-modal-edit" @click="openEdit(dopamine)" icon="assets/pen-circle.svg" />
                 <ion-icon aria-hidden="true" size="small" @click="showDeleteDopaCaseAlert(dopamine.id)"
                     icon="assets/trash.svg" />
             </ion-item>
@@ -34,7 +34,6 @@
         </ion-alert>
         <ion-alert :is-open="isDeleteAlertOpen" header="提醒!" message="确定要删除吗？" :buttons="DeletealertButtons">
         </ion-alert>
-
     </ChildBaseLayout>
 </template>
 <script lang="ts" setup>
@@ -46,6 +45,7 @@ import ChildBaseLayout from '@/components/app/ChildBaseLayout.vue';
 const props = defineProps(['pageDefaultBackLink'])
 
 import { useMySqliteStore } from '@/stores/sqlite'
+import { Dopamine } from '@/models/Dopamine';
 const SqliteStore = useMySqliteStore()
 
 const dopaNameInput = ref('')
@@ -126,6 +126,11 @@ const DeletealertButtons = [
     },
 ];
 
+
+const isAddModalOpen = ref(false)
+const openEdit=(dopamine:Dopamine)=>{
+    console.log('open edit',dopamine)
+}
 
 
 </script>
