@@ -40,7 +40,7 @@
     </ChildBaseLayout>
 </template>
 <script lang="ts" setup>
-import { IonAlert, IonList, IonItem, IonLabel, IonModal, IonButton, IonInput, IonIcon,toastController  } from '@ionic/vue';
+import { IonAlert, IonList, IonItem, IonLabel, IonModal, IonButton, IonInput, IonIcon, toastController } from '@ionic/vue';
 import { add } from "ionicons/icons";
 import { ref } from 'vue'
 
@@ -135,16 +135,21 @@ const updateDopaName = async (event: Event, dopamine: Dopamine) => {
     event.preventDefault()
     let dopaLaber = document.getElementById('dopaLaber' + dopamine.id) as HTMLInputElement
     //console.log('Update', event, dopaLaber.textContent)
-    dopamine.name = dopaLaber.textContent!
-    SqliteStore.handleUpdateDopamine(dopamine)
 
-    const toast = await toastController.create({
-          message: '名称更新!',
-          duration: 500,
-          position: 'top',
+    if (dopamine.name != dopaLaber.textContent) {
+        dopamine.name = dopaLaber.textContent!
+        SqliteStore.handleUpdateDopamine(dopamine)
+        
+        const toast = await toastController.create({
+            message: '名称更新!',
+            duration: 500,
+            position: 'top',
         });
-
         await toast.present();
+    }
+
+
+
 }
 
 
