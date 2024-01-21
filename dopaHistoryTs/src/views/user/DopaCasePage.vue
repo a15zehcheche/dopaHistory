@@ -23,8 +23,11 @@
         </ion-modal>
         <ion-list lines="full" class="dopa-case-list">
             <ion-item v-for="dopamine in SqliteStore.dopamines" class="list-item">
-                <ion-label class="laber"> {{ dopamine.name }}</ion-label>
-                <ion-icon aria-hidden="true" size="small" id="open-modal-edit" @click="openEdit(dopamine)" icon="assets/pen-circle.svg" />
+                <ion-label :id="'dopaLaber' + dopamine.id" contenteditable class="laber"
+                    @blur="updateDopaName($event, dopamine)"> {{ dopamine.name
+                    }}</ion-label>
+                <!--ion-icon aria-hidden="true" size="small" id="open-modal-edit" @click="openEdit(dopamine)"
+                    icon="assets/pen-circle.svg" /-->
                 <ion-icon aria-hidden="true" size="small" @click="showDeleteDopaCaseAlert(dopamine.id)"
                     icon="assets/trash.svg" />
             </ion-item>
@@ -37,7 +40,7 @@
     </ChildBaseLayout>
 </template>
 <script lang="ts" setup>
-import { IonAlert, IonList, IonItem, IonLabel, IonModal, IonButton, IonInput, IonIcon } from '@ionic/vue';
+import { IonAlert, IonList, IonItem, IonLabel, IonModal, IonButton, IonInput, IonIcon,toastController  } from '@ionic/vue';
 import { add } from "ionicons/icons";
 import { ref } from 'vue'
 
@@ -46,6 +49,7 @@ const props = defineProps(['pageDefaultBackLink'])
 
 import { useMySqliteStore } from '@/stores/sqlite'
 import { Dopamine } from '@/models/Dopamine';
+import { Toast } from '@capacitor/toast';
 const SqliteStore = useMySqliteStore()
 
 const dopaNameInput = ref('')
@@ -79,7 +83,6 @@ const confirm = () => {
         SqliteStore.handleAddDopamine(newDapamine)
         modal.value.$el.dismiss();
     }
-    
 
 }
 const isOpen = ref(false)
@@ -127,9 +130,21 @@ const DeletealertButtons = [
 ];
 
 
-const isAddModalOpen = ref(false)
-const openEdit=(dopamine:Dopamine)=>{
-    console.log('open edit',dopamine)
+
+const updateDopaName = async (event: Event, dopamine: Dopamine) => {
+    event.preventDefault()
+    let dopaLaber = document.getElementById('dopaLaber' + dopamine.id) as HTMLInputElement
+    //console.log('Update', event, dopaLaber.textContent)
+    dopamine.name = dopaLaber.textContent!
+    SqliteStore.handleUpdateDopamine(dopamine)
+
+    const toast = await toastController.create({
+          message: '名称更新!',
+          duration: 500,
+          position: 'top',
+        });
+
+        await toast.present();
 }
 
 

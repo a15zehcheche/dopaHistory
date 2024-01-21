@@ -407,7 +407,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   return {
     dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment,
     initConnection, ClearConnection,
-    getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine,
+    getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine,handleUpdateDopamine,
     dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday
   }
 

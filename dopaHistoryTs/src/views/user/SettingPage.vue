@@ -1,6 +1,6 @@
 <template>
     <ChildBaseLayout page-title="设置">
-        <ion-toggle v-model="AppStore.testMode" @ionChange="changeTestMode()" >Test Mode</ion-toggle>
+        <!--ion-toggle v-model="AppStore.testMode" @ionChange="changeTestMode()" >Test Mode</ion-toggle-->
     </ChildBaseLayout>
 </template>
 <script lang="ts" setup>
