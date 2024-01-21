@@ -37,7 +37,7 @@ const dayStyles = (thisDay: day) => {
     } else if (thinkCount > 0) {
         dgColor = thinkColor[thinkCount];
     } else if (thisDay.betweenDay) {
-        dgColor = '#28a745' //已过天
+        dgColor = '#40c463' //已过天
     }
 
     if (dateToString(SqliteStore.dateToday) == dateToString(thisDay.date)) {
