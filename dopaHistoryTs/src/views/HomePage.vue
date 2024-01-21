@@ -4,19 +4,18 @@
       <app-date-time :dateToday="SqliteStore.dateToday"></app-date-time>
       <dopa-bar-main></dopa-bar-main>
       <dopa-case v-if="SqliteStore.dopaCaseActive" :dopamine="SqliteStore.dopaCaseActive"></dopa-case>
-
       <div class="action-btn-box">
+        <action-fab></action-fab>
+      </div>
+      <div class="action-btn-box" v-if="false">
         <ion-button color="danger" @click="dopaDo">Do</ion-button>
         <ion-button color="warning" @click="dopaThink">Think</ion-button>
         <ion-button v-if="AppStore.testMode" color="primary" @click="passNextday">next day</ion-button>
         <ion-button v-if="AppStore.testMode" color="primary" @click="SqliteStore.getHistory(dopaCaseActive!.id)">get
           history</ion-button>
         <ion-button v-if="AppStore.testMode" color="primary" @click="textBtn">test</ion-button>
-
-
       </div>
       <!--user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list-->
-
     </div>
   </base-layout>
 </template>
@@ -49,6 +48,7 @@ import DopaBarMain from '../components/dopaBar/DopaBarMain.vue'
 import BaseLayout from '@/components/app/BaseLayout.vue';
 //new Date('2024-01-15T23:59:55'),
 const router = useIonRouter();
+import ActionFab from '@/components/app/ActionFab.vue';
 
 
 
@@ -65,12 +65,12 @@ const AppStore = useAppStore()
 
 
 
-const dopaDo = async () => {
-  SqliteStore.dopaDo()
+const dopaDo = async (n:number) => {
+  SqliteStore.dopaDo(n)
 }
 
-const dopaThink = async () => {
-  SqliteStore.dopaThink()
+const dopaThink = async (n:number) => {
+  SqliteStore.dopaThink(n)
 }
 
 
@@ -101,7 +101,7 @@ watch(dataReady, (newIsHistory) => {
   display: flex;
   justify-content: space-around;
   position: absolute;
-  bottom: 10px;
+  bottom: 50px;
   z-index: 1;
   width: 100%;
   flex-wrap: wrap;

@@ -298,7 +298,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       console.log("同一天不修改任何当前数据")
 
     }
-    console.log('更新check intervar.',dateIterval.value)
+    console.log('更新check intervar.', dateIterval.value)
     let milliSecoundsReal = calRestMilliSecondsToNextDay()
     setDateIterval(milliSecoundsReal)
 
@@ -373,30 +373,41 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
 
 
   //action
-  const dopaDo = async () => {
-    historyActive.doCount++
+  const dopaDo = async (n: number) => {
+    historyActive.doCount += n
+    if (historyActive.doCount < 0) {
+      historyActive.doCount = 0
+    }
+
     if (historyActive.thinkCount == 0) {
       //if do, think +1
-      historyActive.thinkCount++
-      await addAllThinkCount()
+      await dopaThink(1)
     }
     await handleUpdateDopaHistory(historyActive)
-    addAllDoCount()
-    //console.log("do ++")
+    await addAllDoCount(n)
   }
 
-  const dopaThink = async () => {
-    historyActive.thinkCount++
+  const dopaThink = async (n: number) => {
+    historyActive.thinkCount += n
+    if (historyActive.thinkCount < 0) {
+      historyActive.thinkCount = 0
+    }
     await handleUpdateDopaHistory(historyActive)
-    addAllThinkCount()
-    //console.log("think ++")
+    await addAllThinkCount(n)
+
   }
-  const addAllDoCount = async () => {
-    dopaCaseActive!.value!.allDoDayCount++
+  const addAllDoCount = async (n: number) => {
+    dopaCaseActive!.value!.allDoDayCount += n
+    if (dopaCaseActive!.value!.allDoDayCount < 0) {
+      dopaCaseActive!.value!.allDoDayCount = 0
+    }
     await handleUpdateDopamine(dopaCaseActive!.value!)
   }
-  const addAllThinkCount = async () => {
-    dopaCaseActive!.value!.allThinkDayCount++
+  const addAllThinkCount = async (n: number) => {
+    dopaCaseActive!.value!.allThinkDayCount += n
+    if (dopaCaseActive!.value!.allThinkDayCount < 0) {
+      dopaCaseActive!.value!.allThinkDayCount = 0
+    }
     await handleUpdateDopamine(dopaCaseActive!.value!)
   }
   const setDopaCaseActive = async (dopaId: number) => {
@@ -407,7 +418,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   return {
     dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment,
     initConnection, ClearConnection,
-    getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine,handleUpdateDopamine,
+    getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine, handleUpdateDopamine,
     dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday
   }
 
