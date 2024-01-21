@@ -15,6 +15,7 @@ const SqliteStore = useMySqliteStore()
 const { dataReady, dopaCaseActive } = toRefs(SqliteStore)
 
 import { useAppStore } from '@/stores/app'
+import { thumbsUp } from 'ionicons/icons';
 const AppStore = useAppStore()
 
 
@@ -32,9 +33,10 @@ const numDays = (y: number, m: number) => new Date(y, m, 0).getDate();
 interface day {
     date: Date
     count: {
-        do:number
-        think:number
+        do: number
+        think: number
     }
+    betweenDay: boolean
 }
 interface week {
     byMonth: Number
@@ -80,7 +82,7 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
     //let days: day[] = []
     let historyQueue = [...dopaCaseActiveF.dopaHistorys!].reverse()
     let actualQueueIndex = 0
-
+    let myBetweenDay = false
     //生成时间段内的所有周
     while (dateInit.getTime() < dateFin.getTime()) {
         let tepmDays: day[] = [];
@@ -90,21 +92,38 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
 
             //把数据放上去
             let frequencyCount = {
-                do:0,
-                think:0
+                do: 0,
+                think: 0
             }
+
+            //匹配日期
             if (historyQueue!.length > actualQueueIndex && dateInit.getTime() == new Date(historyQueue![actualQueueIndex].dateTime).getTime()
             ) {
-
-                frequencyCount.do = historyQueue![actualQueueIndex].doCount 
+                frequencyCount.do = historyQueue![actualQueueIndex].doCount
                 frequencyCount.think = historyQueue![actualQueueIndex].thinkCount
                 actualQueueIndex++
-                console.log('push data',frequencyCount)
+                console.log('push data', frequencyCount)
+                myBetweenDay= true
+            } else {
+                //激活已经过的天
+                //要是已经开始，和还没到结尾
+                if (actualQueueIndex > 0) {
+                    if (actualQueueIndex == historyQueue!.length) {
+                        myBetweenDay = false
+                    } else {
+                        myBetweenDay = true
+                    }
+                }
             }
+
+
+
+
 
             tepmDays.push({
                 date: dateInit,
-                count: frequencyCount
+                count: frequencyCount,
+                betweenDay: myBetweenDay
             })
             dateInit = calNextDate(dateInit)
             //console.log(i)

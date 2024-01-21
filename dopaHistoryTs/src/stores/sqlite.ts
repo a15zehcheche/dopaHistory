@@ -8,7 +8,6 @@ import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { Dopamine } from '@/models/Dopamine';
 import { DopaHistory } from '@/models/DopaHistory'
 
-
 export const useCounterStore = defineStore('Counter', () => {
   const count = ref(0)
   const name = ref('Eduardo')
