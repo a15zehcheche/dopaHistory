@@ -17,7 +17,7 @@ import { useMySqliteStore } from '@/stores/sqlite'
 const SqliteStore = useMySqliteStore()
 
 
-console.log(localStorage.getItem('selectedDopaCaseSegment'))
+//console.log(localStorage.getItem('selectedDopaCaseSegment'))
 const handleSegmentChange = (event: any) => {
     localStorage.setItem("selectedDopaCaseSegment", event.detail.value);
     //console.log('Selected segment:', event.detail.value);

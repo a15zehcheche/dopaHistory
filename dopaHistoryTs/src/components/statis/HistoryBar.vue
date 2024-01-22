@@ -51,7 +51,7 @@ const weekList = ref<week[]>([])
 const buildWeekList = (dopaCaseActiveF: Dopamine) => {
     weekList.value = []
     //拿到dopacase 的起始和最后history的日期
-    console.log(dopaCaseActiveF)
+    //console.log(dopaCaseActiveF)
     let dateInit = new Date(dopaCaseActiveF.startDate!)
     let dateFin = new Date(dopaCaseActiveF.dopaHistorys![0].dateTime)
     //把起始日期设置到1号，把最后history的日期设置成年的最后一天
@@ -102,7 +102,7 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
                 frequencyCount.do = historyQueue![actualQueueIndex].doCount
                 frequencyCount.think = historyQueue![actualQueueIndex].thinkCount
                 actualQueueIndex++
-                console.log('push data', frequencyCount)
+                //console.log('push data', frequencyCount)
                 myBetweenDay= true
             } else {
                 //激活已经过的天
@@ -147,15 +147,15 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
 
 onMounted(() => {
     if (dataReady.value) {
-        console.log('build list')
+       //console.log('build list')
         buildWeekList(dopaCaseActive.value!)
-        console.log(dopaCaseActive.value!.dopaHistorys)
+        //console.log(dopaCaseActive.value!.dopaHistorys)
     }
 })
 
 watch(dataReady, (newDate) => {
     buildWeekList(dopaCaseActive.value!)
-    console.log(weekList)
+    //console.log(weekList)
 })
 
 
