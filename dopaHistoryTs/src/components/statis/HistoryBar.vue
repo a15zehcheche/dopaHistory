@@ -83,6 +83,7 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
     let historyQueue = [...dopaCaseActiveF.dopaHistorys!].reverse()
     let actualQueueIndex = 0
     let myBetweenDay = false
+    let BetweenDayStart = false
     //生成时间段内的所有周
     while (dateInit.getTime() < dateFin.getTime()) {
         let tepmDays: day[] = [];
@@ -95,6 +96,10 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
                 do: 0,
                 think: 0
             }
+            //检查开始日期
+            if (historyQueue!.length > actualQueueIndex && dateInit.getTime() == new Date(dopaCaseActiveF.startDate).getTime()) {
+                BetweenDayStart = true
+            }
 
             //匹配日期
             if (historyQueue!.length > actualQueueIndex && dateInit.getTime() == new Date(historyQueue![actualQueueIndex].dateTime).getTime()
@@ -103,11 +108,11 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
                 frequencyCount.think = historyQueue![actualQueueIndex].thinkCount
                 actualQueueIndex++
                 //console.log('push data', frequencyCount)
-                myBetweenDay= true
+                myBetweenDay = true
             } else {
                 //激活已经过的天
                 //要是已经开始，和还没到结尾
-                if (actualQueueIndex > 0) {
+                if (BetweenDayStart) {
                     if (actualQueueIndex == historyQueue!.length) {
                         myBetweenDay = false
                     } else {
@@ -142,7 +147,7 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
 
 onMounted(() => {
     if (dataReady.value) {
-       //console.log('build list')
+        //console.log('build list')
         buildWeekList(dopaCaseActive.value!)
         //console.log(dopaCaseActive.value!.dopaHistorys)
     }

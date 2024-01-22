@@ -7,9 +7,8 @@
       <div class="action-btn-box">
         <action-fab></action-fab>
       </div>
-      <div class="action-btn-box" v-if="false">
-        <ion-button color="danger" @click="dopaDo">Do</ion-button>
-        <ion-button color="warning" @click="dopaThink">Think</ion-button>
+      <div class="action-btn-box" v-if="AppStore.testMode">
+
         <ion-button v-if="AppStore.testMode" color="primary" @click="passNextday">next day</ion-button>
         <ion-button v-if="AppStore.testMode" color="primary" @click="SqliteStore.getHistory(dopaCaseActive!.id)">get
           history</ion-button>
