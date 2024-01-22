@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue'
 const props = defineProps(['week'])
-let monthTitle = ['Jan', 'Fer', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dec']
+let monthTitle = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const thinkColor = ['#F1D7AB', '#F2CB89', '#F3BF67', '#F4B245', '#F5A623']
 const doColor = ['#F1ABAB', '#F28989', '#F36767', '#F44545', '#F52323']
 import { useMySqliteStore } from '@/stores/sqlite'

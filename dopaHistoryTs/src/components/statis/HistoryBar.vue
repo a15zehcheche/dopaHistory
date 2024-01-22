@@ -115,11 +115,6 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
                     }
                 }
             }
-
-
-
-
-
             tepmDays.push({
                 date: dateInit,
                 count: frequencyCount,
