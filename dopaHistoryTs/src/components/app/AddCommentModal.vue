@@ -14,8 +14,7 @@
             </ion-header>
             <ion-content class="ion-padding">
                 <ion-item>
-                    <ion-textarea ref="input" placeholder="在这里输入内容" :auto-grow="true"
-                        value="">
+                    <ion-textarea ref="input" placeholder="在这里输入内容" :auto-grow="true" value="">
                     </ion-textarea>
                 </ion-item>
             </ion-content>
@@ -61,12 +60,13 @@ const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
     }
 };
 
-const addComment = (content:string) => {
-  let newComment = {
+const addComment = async (content: string) => {
+    let newComment = {
         id: new Date().getTime(),
         id_history: SqliteStore.historyActive?.id!,
         content: content
     }
-    SqliteStore.handleAddHistoryCommnet(newComment)
+    await SqliteStore.handleAddHistoryCommnet(newComment)
+    await SqliteStore.dopaThink(1)
 }
 </script>

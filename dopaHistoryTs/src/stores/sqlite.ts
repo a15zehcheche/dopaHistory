@@ -93,7 +93,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   const dopaCaseActive = ref<Dopamine>();
   const dataReady = ref(false);
   const dopamines = ref<Dopamine[]>([]);
-  let historyActive =ref<DopaHistory>();
+  let historyActive = ref<DopaHistory>();
   const dateToday = ref<Date>(new Date());
   const selectedDopaCaseSegment = ref<any>(null);
 
@@ -146,7 +146,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
         lastThinkDay: 0,
         thinkCount: 0,
         doCount: 0,
-        comments:[]
+        comments: []
       }
       await handleAddHistory(newhistory)
       getHistoryByDopamineId(dopamineId)
@@ -266,7 +266,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       console.log('新的一天')
       let dayPast = differenceBetweenDays(new Date(dateToString(dateToday.value)), new Date(historyActive.value!.dateTime))
       console.log('pass day :', dayPast)
-    if (historyActive.value!.doCount > 0 || historyActive.value!.thinkCount > 0) {
+      if (historyActive.value!.doCount > 0 || historyActive.value!.thinkCount > 0) {
         console.log("Creat new Dopa History")
         let lastDoDay = historyActive.value!.doCount > 0 ? dayPast : (historyActive.value!.lastDoDay + dayPast)
         let lastThinkDay = historyActive.value!.thinkCount > 0 ? dayPast : (historyActive.value!.lastThinkDay + dayPast)
@@ -278,7 +278,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
           lastThinkDay: lastThinkDay,
           thinkCount: 0,
           doCount: 0,
-          comments:[]
+          comments: []
         })
         let lastId = await handleAddHistory(newHistory.value)
         if (lastId != 0) {
@@ -382,7 +382,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     }
     return 0
   };
-  const handleGetCommentByHistoryId = async (historyId: number):Promise<HistoryComment[]> => {
+  const handleGetCommentByHistoryId = async (historyId: number): Promise<HistoryComment[]> => {
     if (db.value) {
       const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
       const fetchData = await storageServ.getCommentByHistoryId(historyId);
@@ -396,10 +396,10 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   //action
   const dopaDo = async (n: number) => {
     historyActive.value!.doCount += n
+
     if (historyActive.value!.doCount < 0) {
       historyActive.value!.doCount = 0
     }
-
     if (historyActive.value!.thinkCount == 0) {
       //if do, think +1
       await dopaThink(1)
@@ -437,10 +437,10 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     checkIsPassNextDay()
   }
   return {
-    dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment,historyActive,
+    dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment, historyActive,
     initConnection, ClearConnection,
     getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine, handleUpdateDopamine,
-    handleGetCommentByHistoryId,handleAddHistoryCommnet,
+    handleGetCommentByHistoryId, handleAddHistoryCommnet,
     dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday
   }
 
