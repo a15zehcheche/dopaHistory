@@ -4,7 +4,7 @@
       <ion-icon :icon="add"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
-      <ion-fab-button @click="addComment()"  id="open-modal">
+      <ion-fab-button id="open-modal">
         <!--ion-button expand="block">Open</ion-button-->
         <ion-icon src="/assets/comment-alt-edit.svg"></ion-icon>
       </ion-fab-button>
@@ -33,8 +33,8 @@
 import { IonFab, IonFabButton, IonFabList, IonIcon } from '@ionic/vue';
 import { add, chevronBack, chevronDown, chevronForward, chevronUp } from 'ionicons/icons';
 import { defineComponent } from 'vue';
-import { useMySqliteStore } from '@/stores/sqlite'
 import AddCommentModal from './AddCommentModal.vue'
+import { useMySqliteStore } from '@/stores/sqlite'
 const SqliteStore = useMySqliteStore()
 
 const dopaDo = async (n: number) => {
@@ -45,8 +45,6 @@ const dopaThink = async (n: number) => {
   SqliteStore.dopaThink(n)
 }
 
-const addComment = () => {
-  console.log('add comment')
-}
+
 
 </script>

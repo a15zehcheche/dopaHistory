@@ -42,7 +42,7 @@
 <script lang="ts" setup>
 import { IonAlert, IonList, IonItem, IonLabel, IonModal, IonButton, IonInput, IonIcon, toastController } from '@ionic/vue';
 import { add } from "ionicons/icons";
-import { ref } from 'vue'
+import { ref, defineProps } from 'vue'
 
 import ChildBaseLayout from '@/components/app/ChildBaseLayout.vue';
 const props = defineProps(['pageDefaultBackLink'])
@@ -139,7 +139,7 @@ const updateDopaName = async (event: Event, dopamine: Dopamine) => {
     if (dopamine.name != dopaLaber.textContent) {
         dopamine.name = dopaLaber.textContent!
         SqliteStore.handleUpdateDopamine(dopamine)
-        
+
         const toast = await toastController.create({
             message: '名称更新!',
             duration: 500,

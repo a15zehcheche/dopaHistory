@@ -43,6 +43,13 @@ export const UserUpgradeStatements = [
             "doCount"	INTEGER DEFAULT 0,
             PRIMARY KEY("id" AUTOINCREMENT),
             FOREIGN KEY("id_dopamine") REFERENCES "dopamine"("id")
+        );`,
+        `CREATE TABLE "comment" (
+            "id"	INTEGER NOT NULL,
+            "id_history"	INTEGER,
+            "content"	TEXT,
+            PRIMARY KEY("id" AUTOINCREMENT),
+            FOREIGN KEY("id_history") REFERENCES "history"("id")
         );`
     ]
 

@@ -7,7 +7,7 @@ import { UserUpgradeStatements } from '../upgrades/user.upgrade.statements';
 import { User } from '../models/User';
 import { Dopamine } from '../models/Dopamine'
 import { DopaHistory } from '../models/DopaHistory'
-
+import { HistoryComment } from '../models/HistoryComment'
 export interface IStorageService {
     initializeDatabase(): Promise<void>
     getUsers(): Promise<User[]>
@@ -159,6 +159,33 @@ class StorageService implements IStorageService {
         await this.db.run(sql);
     }
 
+    //comment sql
+    async getCommentByHistoryId(id: number): Promise<HistoryComment[]> {
+        const sql = `SELECT * FROM comment WHERE id_history=${id}`;
+        return (await this.db.query(sql)).values as HistoryComment[];
+    }
+    async addComment(newComment: HistoryComment): Promise<number> {
+        const sql = `INSERT INTO comment (id_history,content) VALUES (${newComment.id_history},"${newComment.content}");`;
+        console.log(sql)
+        const res = await this.db.run(sql);
+        if (res.changes !== undefined
+            && res.changes.lastId !== undefined && res.changes.lastId > 0) {
+            return res.changes.lastId;
+        } else {
+            throw new Error(`storageServiceaddComment: lastId not returned`);
+        }
+    }
+    async updateCommentById(historyComment: HistoryComment): Promise<void> {
+        const sql = `UPDATE comment SET 
+        content="${historyComment.content}"
+        WHERE id=${historyComment.id}`;
+        //console.log(sql)
+        await this.db.run(sql);
+    }
+    async deleteCommentByHistoryId(id: string): Promise<void> {
+        const sql = `DELETE FROM comment WHERE id_history=${id}`;
+        await this.db.run(sql);
+    }
 
 
 }

@@ -1,3 +1,4 @@
+import {HistoryComment} from './HistoryComment'
 export interface DopaHistory {
     id: number
     id_dopamine: number
@@ -6,4 +7,5 @@ export interface DopaHistory {
     lastThinkDay: number
     thinkCount: number
     doCount: number
+    comments:HistoryComment[]
 }

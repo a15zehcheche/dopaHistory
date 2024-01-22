@@ -38,7 +38,8 @@ import {
 } from '@ionic/vue';
 import { OverlayEventDetail } from '@ionic/core/components';
 import { ref } from 'vue';
-
+import { useMySqliteStore } from '@/stores/sqlite'
+const SqliteStore = useMySqliteStore()
 
 const modal = ref();
 const input = ref();
@@ -46,16 +47,26 @@ const input = ref();
 const cancel = () => modal.value.$el.dismiss(null, 'cancel');
 
 const confirm = () => {
-    const name = input.value.$el.value;
-    modal.value.$el.dismiss(name, 'confirm');
+    const content = input.value.$el.value;
+    modal.value.$el.dismiss(content, 'confirm');
 };
 
 const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
         console.log("confirm", ev.detail.data)
+        addComment(ev.detail.data)
     }
     else if (ev.detail.role === 'cancel') {
         console.log("cancel", ev.detail.data)
     }
 };
+
+const addComment = (content:string) => {
+  let newComment = {
+        id: new Date().getTime(),
+        id_history: SqliteStore.historyActive?.id!,
+        content: content
+    }
+    SqliteStore.handleAddHistoryCommnet(newComment)
+}
 </script>
