@@ -1,20 +1,21 @@
 <template>
   <base-layout pageTitle="主页">
-    <div class="main-body">
+    <div class="main-body" @scroll="handleScroll">
       <app-date-time :dateToday="SqliteStore.dateToday"></app-date-time>
       <dopa-bar-main></dopa-bar-main>
       <dopa-case v-if="SqliteStore.dopaCaseActive" :dopamine="SqliteStore.dopaCaseActive"></dopa-case>
+      <comment-box v-if="dataReady" :dopaHistory="SqliteStore.historyActive"></comment-box>
       <div class="action-btn-box">
-        <action-fab></action-fab>
+        <action-fab :class="{ 'hide': mainScrollTop }"></action-fab>
       </div>
-      <div class="action-btn-box" v-if="AppStore.testMode">
 
+
+      <!--div class="action-btn-box" v-if="AppStore.testMode">
         <ion-button v-if="AppStore.testMode" color="primary" @click="passNextday">next day</ion-button>
         <ion-button v-if="AppStore.testMode" color="primary" @click="SqliteStore.getHistory(dopaCaseActive!.id)">get
           history</ion-button>
         <ion-button v-if="AppStore.testMode" color="primary" @click="textBtn">test</ion-button>
-      </div>
-      <!--user-list :users="users" :onUpdateUser="handleUpdateUser" :onDeleteUser="handleDeleteUser"></user-list-->
+      </div-->
     </div>
   </base-layout>
 </template>
@@ -59,16 +60,15 @@ const SqliteStore = useMySqliteStore()
 const { dataReady, dopaCaseActive } = toRefs(SqliteStore)
 import { useAppStore } from '@/stores/app'
 const AppStore = useAppStore()
+import CommentBox from '@/components/comment/CommentBox.vue';
 
+const mainScrollTop = ref()
 
-
-
-
-const dopaDo = async (n:number) => {
+const dopaDo = async (n: number) => {
   SqliteStore.dopaDo(n)
 }
 
-const dopaThink = async (n:number) => {
+const dopaThink = async (n: number) => {
   SqliteStore.dopaThink(n)
 }
 
@@ -90,13 +90,19 @@ watch(dataReady, (newIsHistory) => {
   }
 })
 
+const handleScroll = (event: Event) => {
+  // 获取滚动位置
+  mainScrollTop.value = (event.target as HTMLInputElement).scrollTop
+  //console.log('Scroll Y:', mainScrollTop.value);
+
+}
 
 
 
 
 </script>
-<style scoped>
-.action-btn-box {
+<style lang="less" >
+/*.action-btn-box {
   display: flex;
   justify-content: space-around;
   position: absolute;
@@ -104,14 +110,34 @@ watch(dataReady, (newIsHistory) => {
   z-index: 1;
   width: 100%;
   flex-wrap: wrap;
-}
+}*/
 
-.action-btn-box ion-button {
-  width: 150px;
-}
 
 .main-body {
   position: relative;
   height: 100%;
+  overflow-y: scroll;
+}
+
+.action-btn-box {
+  position: absolute;
+  bottom: 0px;
+  z-index: 1;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  .action-btn {
+      display: block;
+      transition: transform 0.5s ease-in-out;
+  }
+
+
+}
+
+.hide {
+  .action-btn {
+    transform: translateY(200px);
+  }
+  
 }
 </style>

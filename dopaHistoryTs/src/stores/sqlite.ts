@@ -154,6 +154,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       console.log("6 - set history active")
       historyActive.value = dopaCaseActive!.value!.dopaHistorys[0]
       console.log(dopaCaseActive)
+      getComment(0)
       dataReady.value = true
     }
   };
@@ -386,7 +387,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     if (db.value) {
       const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
       const fetchData = await storageServ.getCommentByHistoryId(historyId);
-      return fetchData as HistoryComment[]
+      return fetchData.reverse() as HistoryComment[]
     }
     return []
 
@@ -409,13 +410,17 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   }
 
   const dopaThink = async (n: number) => {
-    historyActive.value!.thinkCount += n
-    if (historyActive.value!.thinkCount < 0) {
+    let count = historyActive.value!.thinkCount + n
+
+    if (count < 0) {
       historyActive.value!.thinkCount = 0
     }
-    await handleUpdateDopaHistory(historyActive.value!)
-    await addAllThinkCount(n)
-
+    console.log(count, historyActive.value!.comments.length)
+    if (count >= historyActive.value!.comments.length) {
+      historyActive.value!.thinkCount = count
+      await handleUpdateDopaHistory(historyActive.value!)
+      await addAllThinkCount(n)
+    }
   }
   const addAllDoCount = async (n: number) => {
     dopaCaseActive!.value!.allDoDayCount += n
@@ -436,12 +441,20 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     await getHistoryByDopamineId(dopaCaseActive.value!.id)
     checkIsPassNextDay()
   }
+  const getComment = async (historyIndex: number) => {
+    let historyId = dopaCaseActive.value!.dopaHistorys![historyIndex].id
+    let comments = await handleGetCommentByHistoryId(historyId)
+    //console.log(comments)
+    dopaCaseActive.value!.dopaHistorys![historyIndex].comments = comments
+    console.log(dopaCaseActive.value!.dopaHistorys![historyIndex].comments)
+}
+
   return {
     dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment, historyActive,
     initConnection, ClearConnection,
     getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine, handleUpdateDopamine,
     handleGetCommentByHistoryId, handleAddHistoryCommnet,
-    dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday
+    dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday,getComment
   }
 
 })

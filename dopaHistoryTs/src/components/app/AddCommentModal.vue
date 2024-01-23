@@ -1,5 +1,4 @@
 <template>
-    <ion-content class="ion-padding">
         <ion-modal ref="modal" trigger="open-modal" @willDismiss="onWillDismiss">
             <ion-header>
                 <ion-toolbar>
@@ -19,7 +18,6 @@
                 </ion-item>
             </ion-content>
         </ion-modal>
-    </ion-content>
 </template>
   
 <script lang="ts" setup>
@@ -33,7 +31,8 @@ import {
     IonTitle,
     IonItem,
     IonInput,
-    IonTextarea
+    IonTextarea,
+    toastController
 } from '@ionic/vue';
 import { OverlayEventDetail } from '@ionic/core/components';
 import { ref } from 'vue';
@@ -68,5 +67,12 @@ const addComment = async (content: string) => {
     }
     await SqliteStore.handleAddHistoryCommnet(newComment)
     await SqliteStore.dopaThink(1)
+    await SqliteStore.getComment(0)
+    const toast = await toastController.create({
+        message: '评论添加成功!',
+        duration: 1000,
+        position: 'top',
+    });
+    await toast.present();
 }
 </script>
