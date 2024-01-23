@@ -6,7 +6,7 @@
       <dopa-case v-if="SqliteStore.dopaCaseActive" :dopamine="SqliteStore.dopaCaseActive"></dopa-case>
       <comment-box v-if="dataReady" :dopaHistory="SqliteStore.historyActive"></comment-box>
       <div class="action-btn-box">
-        <action-fab :class="{ 'hide': mainScrollTop }"></action-fab>
+        <action-fab :class="[{ 'hide': mainScrollTop},{ 'none': mainScrollTop>20}]"></action-fab>
       </div>
 
 
@@ -117,6 +117,7 @@ const handleScroll = (event: Event) => {
   
   height: 100%;
   overflow-y: scroll;
+
 }
 
 .action-btn-box {
@@ -124,8 +125,6 @@ const handleScroll = (event: Event) => {
   bottom: 0px;
   z-index: 1;
   width: 100%;
-  height: 150px;
-  overflow: hidden;
   .action-btn {
       display: block;
       transition: transform 0.5s ease-in-out;
@@ -138,6 +137,10 @@ const handleScroll = (event: Event) => {
   .action-btn {
     transform: translateY(200px);
   }
-  
+}
+.none{
+  .action-btn {
+    display: none;
+  }
 }
 </style>
