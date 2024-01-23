@@ -114,7 +114,7 @@ const handleScroll = (event: Event) => {
 
 
 .main-body {
-  position: relative;
+  
   height: 100%;
   overflow-y: scroll;
 }
