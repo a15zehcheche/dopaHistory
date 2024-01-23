@@ -23,15 +23,16 @@ const dayStyles = (color: string) => {
     align-items: center;
     margin-bottom: 15px ;
     .square {
-        width: 20px;
-        height: 20px;
-        border-radius: 5px;
+        width: 15px;
+        height: 15px;
+        border-radius: 3px;
         background-color: var(--app-stais-day-bg);
         margin: 2px;
         //flex-shrink: 0;
     }
     span{
         margin: 0 10px;
+        color: var(--ion-color-medium);
     }
 }
 </style>
