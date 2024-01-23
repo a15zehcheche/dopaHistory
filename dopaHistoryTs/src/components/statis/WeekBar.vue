@@ -33,9 +33,9 @@ const dayStyles = (thisDay: day) => {
     let thinkCount = thisDay.count.think > 4 ? 4 : thisDay.count.think
     let bgColor = '#D9D9D9' //基础色
     if (doCount > 0) {
-        bgColor = doColor[doCount];
+        bgColor = doColor[doCount-1];
     } else if (thinkCount > 0) {
-        bgColor = thinkColor[thinkCount];
+        bgColor = thinkColor[thinkCount-1];
     } else if (thisDay.betweenDay) {
         bgColor = '#40c463' //已过天
     }
