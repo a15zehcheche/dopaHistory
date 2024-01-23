@@ -332,6 +332,16 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   //handle
   const handleDeleteDopamine = async (id: number) => {
     if (db.value) {
+      //删除所有的comment
+      const stmt = `SELECT * FROM history WHERE id_dopamine=${id}`;
+      const values: any[] = [];
+      const fetchData = await useQuerySQLite(db, stmt, values) 
+      let dopaHistorys = fetchData as DopaHistory[]
+      for(let i =0 ; i<dopaHistorys.length; i++){
+        await handleDeleteCommentByHistoryId(dopaHistorys[i].id)
+      }
+  
+      //删除所有history
       await handleDeleteHistoryByDopamineId(id)
       const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
       const lastId = await storageServ.deleteDopamineById(id);
@@ -390,8 +400,13 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       return fetchData.reverse() as HistoryComment[]
     }
     return []
-
   }
+  const handleDeleteCommentByHistoryId = async (id: number) => {
+    if (db.value) {
+      const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+      const lastId = await storageServ.deleteCommentByHistoryId(id)
+    }
+  };
 
 
   //action
