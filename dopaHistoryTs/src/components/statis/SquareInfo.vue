@@ -7,7 +7,7 @@
 </template>
 <script lang="ts" setup>
 import {ref} from 'vue'
-const colores =ref( ['#40c463','#F1D7AB', '#F2CB89', '#F3BF67', '#F4B245', '#F5A623','#F1ABAB', '#F28989', '#F36767', '#F44545', '#F52323'])
+const colores =ref( ['#9be9a8','#F1D7AB', '#F2CB89', '#F3BF67', '#F4B245', '#F5A623','#F1ABAB', '#F28989', '#F36767', '#F44545', '#F52323'])
 const dayStyles = (color: string) => {
     return {
         "background-color": color

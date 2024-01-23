@@ -21,16 +21,16 @@
                 </div>
             </div>
         </ion-modal>
-        <ion-list lines="full" class="dopa-case-list" contenteditable="false" >
+        <ion-list lines="full" class="dopa-case-list" contenteditable="false">
             <div v-for="dopamine in SqliteStore.dopamines" class="list-item">
                 <ion-label :id="'dopaLaber' + dopamine.id" contenteditable="true" class="laber"
                     @blur="updateDopaName($event, dopamine)"> {{ dopamine.name
                     }}</ion-label>
-           
-                <ion-icon aria-hidden="true" contenteditable="false" @blur="" size="small" @click="showDeleteDopaCaseAlert(dopamine.id)"
-                    icon="assets/trash.svg" />
+
+                <ion-icon aria-hidden="true" contenteditable="false" @blur="" size="small"
+                    @click="showDeleteDopaCaseAlert(dopamine.id)" icon="assets/trash.svg" />
             </div>
-          
+
         </ion-list>
         <ion-alert :is-open="isOpen" header="错误提醒" :buttons="alertButtons" message="不能删除当前使用的案例"
             @didDismiss="setOpen(false)">
@@ -136,7 +136,7 @@ const updateDopaName = async (event: Event, dopamine: Dopamine) => {
     let dopaLaber = document.getElementById('dopaLaber' + dopamine.id) as HTMLInputElement
     //console.log('Update', event, dopaLaber.textContent)
 
-    if (dopamine.name != dopaLaber.textContent && dopaLaber.textContent!.length <= 20 ) {
+    if (dopamine.name != dopaLaber.textContent && dopaLaber.textContent!.length <= 20) {
         dopamine.name = dopaLaber.textContent!
         SqliteStore.handleUpdateDopamine(dopamine)
 
@@ -146,7 +146,7 @@ const updateDopaName = async (event: Event, dopamine: Dopamine) => {
             position: 'top',
         });
         await toast.present();
-    }else{
+    } else if (dopaLaber.textContent!.length > 20) {
         const toast = await toastController.create({
             message: '名称更新错误，名称长度不能超20!',
             duration: 500,
@@ -181,16 +181,18 @@ ion-modal {
 }
 
 .dopa-case-list {
-    .list-item{
+    .list-item {
         display: grid;
         grid-template-columns: auto 50px;
         min-height: 50px;
         align-items: center;
         border-bottom: 1px solid var(--ion-color-light-shade);
-        .laber{
+
+        .laber {
             margin-left: 20px;
         }
     }
+
     ion-icon {
         margin-left: 10px;
     }
