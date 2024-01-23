@@ -1,9 +1,8 @@
 <template>
     <div class="comment-box" v-if="dopaHistory.comments?.length > 0">
         <ion-card color="light" v-for=" comment in dopaHistory.comments">
-            <ion-card-content>
+            <ion-card-content >
                 {{ comment.content }}
-
             </ion-card-content>
             <ion-card-header>
                 <!--ion-card-title>Card Title</ion-card-title-->
@@ -34,13 +33,14 @@ const SqliteStore = useMySqliteStore()
 
 <style lang="less" scoped>
 .comment-box {
-
-
     .comment-box-info {
         color: var(--ion-color-medium);
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+    ion-card-content{
+        text-align: justify;
     }
 }
 </style>

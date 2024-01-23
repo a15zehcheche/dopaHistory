@@ -31,23 +31,23 @@ const dateToString = (date: Date) => {
 const dayStyles = (thisDay: day) => {
     let doCount = thisDay.count.do > 4 ? 4 : thisDay.count.do
     let thinkCount = thisDay.count.think > 4 ? 4 : thisDay.count.think
-    let dgColor = '#D9D9D9' //基础色
+    let bgColor = '#D9D9D9' //基础色
     if (doCount > 0) {
-        dgColor = doColor[doCount];
+        bgColor = doColor[doCount];
     } else if (thinkCount > 0) {
-        dgColor = thinkColor[thinkCount];
+        bgColor = thinkColor[thinkCount];
     } else if (thisDay.betweenDay) {
-        dgColor = '#40c463' //已过天
+        bgColor = '#40c463' //已过天
     }
 
     if (dateToString(SqliteStore.dateToday) == dateToString(thisDay.date)) {
         return {
             'box-shadow': '0px 0px 5px 0px rgba(100,100,100,1)',
-            "background-color": dgColor
+            "background-color": bgColor
         }
     } else {
         return {
-            "background-color": dgColor
+            "background-color": bgColor
         }
     }
 

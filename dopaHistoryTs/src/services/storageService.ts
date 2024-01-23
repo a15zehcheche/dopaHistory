@@ -186,6 +186,10 @@ class StorageService implements IStorageService {
         const sql = `DELETE FROM comment WHERE id_history=${id}`;
         await this.db.run(sql);
     }
+    async deleteCommentById(id: string): Promise<void> {
+        const sql = `DELETE FROM comment WHERE id=${id}`;
+        await this.db.run(sql);
+    }
 
 
 }
