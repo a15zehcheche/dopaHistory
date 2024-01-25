@@ -154,7 +154,9 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       console.log("6 - set history active")
       historyActive.value = dopaCaseActive!.value!.dopaHistorys[0]
       console.log(dopaCaseActive)
-      getComment(0)
+      dopaCaseActive!.value!.dopaHistorys.forEach(async dopaHistory =>{
+        dopaHistory.comments = await handleGetCommentByHistoryId(dopaHistory.id)
+      })
       dataReady.value = true
     }
   };
@@ -335,12 +337,12 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       //删除所有的comment
       const stmt = `SELECT * FROM history WHERE id_dopamine=${id}`;
       const values: any[] = [];
-      const fetchData = await useQuerySQLite(db, stmt, values) 
+      const fetchData = await useQuerySQLite(db, stmt, values)
       let dopaHistorys = fetchData as DopaHistory[]
-      for(let i =0 ; i<dopaHistorys.length; i++){
+      for (let i = 0; i < dopaHistorys.length; i++) {
         await handleDeleteCommentByHistoryId(dopaHistorys[i].id)
       }
-  
+
       //删除所有history
       await handleDeleteHistoryByDopamineId(id)
       const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
@@ -399,13 +401,21 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       const fetchData = await storageServ.getCommentByHistoryId(historyId);
       return fetchData.reverse() as HistoryComment[]
     }
-    return []
+    return [] as HistoryComment[]
   }
   const handleDeleteCommentByHistoryId = async (id: number) => {
     if (db.value) {
       const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
       const lastId = await storageServ.deleteCommentByHistoryId(id)
     }
+  };
+  const handleGetHistoryId = async (id: number) => {
+    if (db.value) {
+      const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+      const fetchData = await storageServ.getHistoryId(id);
+      return fetchData as History[]
+    }
+    return []
   };
 
 
@@ -416,7 +426,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     if (historyActive.value!.doCount < 0) {
       historyActive.value!.doCount = 0
     }
-    if (historyActive.value!.thinkCount == 0) {
+    if (historyActive.value!.thinkCount == 0 && n > 0) {
       //if do, think +1
       await dopaThink(1)
     }
@@ -462,14 +472,20 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     //console.log(comments)
     dopaCaseActive.value!.dopaHistorys![historyIndex].comments = comments
     console.log(dopaCaseActive.value!.dopaHistorys![historyIndex].comments)
-}
+  }
+  const getCommentById = async (commentId: Number): Promise<DopaHistory[]> => {
+    const stmt = `SELECT * FROM comment WHERE id=${commentId}`;
+    const values: any[] = [];
+    const fetchData = await useQuerySQLite(db, stmt, values);
+    return fetchData as DopaHistory[];
+  }
 
   return {
     dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment, historyActive,
     initConnection, ClearConnection,
     getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine, handleUpdateDopamine,
-    handleGetCommentByHistoryId, handleAddHistoryCommnet,
-    dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday,getComment
+    handleGetCommentByHistoryId, handleAddHistoryCommnet, handleGetHistoryId,
+    dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday, getComment, getCommentById
   }
 
 })

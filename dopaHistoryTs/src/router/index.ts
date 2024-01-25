@@ -40,8 +40,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/dopaCase',
     name: 'dopaCase',
     component: () => import('@/views/user/DopaCasePage.vue'),
-
   },
+  {
+    path: '/comment/detail/:id',
+    name: 'CommentDetail',
+    component: () => import('@/components/comment/commentDetail.vue'),
+  }
 
 ]
 

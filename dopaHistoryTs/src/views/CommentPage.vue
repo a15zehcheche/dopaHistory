@@ -2,11 +2,11 @@
     <base-layout pageTitle="记录">
         <template v-slot:actions-end>
         </template>
-        <div v-if='commentCount==0' class="comment-body">
-            <img width="250px" height="250px" src="/assets/planet.png"  alt="">
-            <span class="info" >没有记录。。。</span>
+        <div v-if='commentCount == 0' class="comment-body">
+            <img width="250px" height="250px" src="/assets/planet.png" alt="">
+            <span class="info">没有记录。。。</span>
         </div>
-        <comment-box  :commentCount="commentCount" v-for="dopahistory in SqliteStore.dopaCaseActive?.dopaHistorys"
+        <comment-box v-for="dopahistory in SqliteStore.dopaCaseActive?.dopaHistorys"
             :dopaHistory="dopahistory"></comment-box>
     </base-layout>
 </template>
@@ -16,14 +16,17 @@ import CommentBox from '@/components/comment/CommentBox.vue';
 import { onMounted, ref } from 'vue';
 import { useMySqliteStore } from '@/stores/sqlite'
 import { IonIcon } from '@ionic/vue';
-
+import { useAppStore } from '@/stores/app'
+const AppStore = useAppStore()
 const SqliteStore = useMySqliteStore()
-let commentCount = ref(0)
-
-onMounted(() => {
-    for (let i = 0; i < SqliteStore.dopaCaseActive?.dopaHistorys?.length!; i++) {
-        commentCount.value += SqliteStore.dopaCaseActive?.dopaHistorys![i].comments.length!
-    }
+const commentCount = ref(0)
+onMounted(()=>{
+    console.log(SqliteStore.dopaCaseActive?.dopaHistorys)
+    SqliteStore.dopaCaseActive?.dopaHistorys!.forEach(dopaHistory => {
+        dopaHistory.comments.forEach(comment=>{
+            commentCount.value ++;
+        })
+    });
 })
 </script>
 

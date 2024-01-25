@@ -119,6 +119,10 @@ class StorageService implements IStorageService {
     }
 
     //history sql
+    async getHistoryId(id: number): Promise<DopaHistory[]> {
+        const sql = `SELECT * FROM history WHERE id=${id}`;
+        return (await this.db.query(sql)).values as DopaHistory[];
+    }
     async getHistoryByDopamineId(id: number): Promise<DopaHistory[]> {
         const sql = `SELECT * FROM history WHERE id_dopamine=${id} ORDER by date(datetime) DESC`;
         return (await this.db.query(sql)).values as DopaHistory[];
