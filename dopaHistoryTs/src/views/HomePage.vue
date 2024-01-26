@@ -6,7 +6,7 @@
       <dopa-case v-if="SqliteStore.dopaCaseActive" :dopamine="SqliteStore.dopaCaseActive"></dopa-case>
       <comment-box v-if="dataReady" :dopaHistory="SqliteStore.historyActive"></comment-box>
       <div class="action-btn-box">
-        <action-fab :class="[{ 'hide': mainScrollTop},{ 'none': mainScrollTop>20}]"></action-fab>
+        <action-fab :class="[{ 'hide': mainScrollTop},{ 'none': mainScrollTop>15}]"></action-fab>
       </div>
 
 

@@ -154,9 +154,6 @@ const updateDopaName = async (event: Event, dopamine: Dopamine) => {
         });
         await toast.present();
     }
-
-
-
 }
 
 

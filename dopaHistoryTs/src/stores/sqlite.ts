@@ -154,7 +154,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       console.log("6 - set history active")
       historyActive.value = dopaCaseActive!.value!.dopaHistorys[0]
       console.log(dopaCaseActive)
-      dopaCaseActive!.value!.dopaHistorys.forEach(async dopaHistory =>{
+      dopaCaseActive!.value!.dopaHistorys.forEach(async dopaHistory => {
         dopaHistory.comments = await handleGetCommentByHistoryId(dopaHistory.id)
       })
       dataReady.value = true
@@ -417,6 +417,46 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     }
     return []
   };
+  const handleDeleteCommentById = async (commentId: number) => {
+    if (db.value) {
+      const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+      const lastId = await storageServ.deleteCommentById(commentId)
+      dopamines.value = dopamines.value.map(dopamine => {
+        // 使用 map 方法遍历 dopaHistorys 数组
+        dopamine.dopaHistorys = dopamine.dopaHistorys!.map(history => {
+          // 使用 map 方法遍历 comments 数组
+          history.comments = history.comments.filter(comment => comment.id !== commentId);
+          return history;
+        });
+        return dopamine;
+      });
+    }
+  };
+  const handleUpdatComment = async (updHistoryCommnet: HistoryComment) => {
+    if (db.value) {
+      const isConn = await sqliteServ.isConnection(dbNameRef.value, false);
+      await storageServ.updateCommentById(updHistoryCommnet);
+      dopamines.value = dopamines.value.map(dopamine => {
+        // 使用 map 方法遍历 dopaHistorys 数组
+        dopamine.dopaHistorys = dopamine.dopaHistorys!.map(history => {
+          // 使用 map 方法遍历 comments 数组
+          history.comments = history.comments.map(comment => {
+            // 如果 comment 的 id 等于目标 id，则进行修改
+            if (comment.id === updHistoryCommnet.id) {
+              // 修改 comment 对象的属性
+              comment.content = updHistoryCommnet.content
+              return { ...comment, /* 修改的属性 */ };
+            } else {
+              return comment;
+            }
+          });
+          return history;
+        });
+        return dopamine;
+      });
+
+    }
+  };
 
 
   //action
@@ -484,7 +524,8 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment, historyActive,
     initConnection, ClearConnection,
     getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine, handleUpdateDopamine,
-    handleGetCommentByHistoryId, handleAddHistoryCommnet, handleGetHistoryId,
+    handleGetCommentByHistoryId, handleAddHistoryCommnet, handleGetHistoryId, handleDeleteCommentById,
+    handleUpdatComment,
     dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday, getComment, getCommentById
   }
 
