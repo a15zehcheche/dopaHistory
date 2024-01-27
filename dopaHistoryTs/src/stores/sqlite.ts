@@ -141,7 +141,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       let newhistory = {
         id: Date.now(),
         id_dopamine: dopaCaseActive.value!.id,
-        dateTime: dateToString(new Date()),
+        dateTime: dateToString(new Date(dopaCaseActive.value!.startDate)),
         lastDoDay: 0,
         lastThinkDay: 0,
         thinkCount: 0,
