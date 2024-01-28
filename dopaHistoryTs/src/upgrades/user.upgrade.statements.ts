@@ -48,8 +48,10 @@ export const UserUpgradeStatements = [
             "id"	INTEGER NOT NULL,
             "id_history"	INTEGER,
             "content"	TEXT,
-            PRIMARY KEY("id" AUTOINCREMENT),
-            FOREIGN KEY("id_history") REFERENCES "history"("id")
+            "stars"	BLOB DEFAULT 'False',
+            "dateTime"	INTEGER,
+            FOREIGN KEY("id_history") REFERENCES "history"("id"),
+            PRIMARY KEY("id" AUTOINCREMENT)
         );`
     ]
 

@@ -289,7 +289,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
           dopaCaseActive!.value!.dopaHistorys!.unshift(newHistory.value);
           historyActive.value = newHistory.value
         }
-        checkBestRecord(newHistory.value)
+        await checkBestRecord(newHistory.value)
       } else {
         historyActive.value!.dateTime = dateToString(dateToday.value)
         historyActive.value!.lastDoDay = dayPast + historyActive.value!.lastDoDay;
@@ -444,7 +444,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
             // 如果 comment 的 id 等于目标 id，则进行修改
             if (comment.id === updHistoryCommnet.id) {
               // 修改 comment 对象的属性
-              comment.content = updHistoryCommnet.content
+              comment = {...updHistoryCommnet}
               return { ...comment, /* 修改的属性 */ };
             } else {
               return comment;

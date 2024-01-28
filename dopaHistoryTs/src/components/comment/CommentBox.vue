@@ -7,11 +7,9 @@
             <!--ion-card-title>Card Title</ion-card-title-->
             <ion-card-subtitle>
                 <div class="comment-box-info">
-                    <div>{{ dopaHistory.dateTime }}</div>
+                    <div>{{ formatDateTime(comment.dateTime) }}</div>
                     <div>
-                        <span class="dopa-do">{{ dopaHistory.doCount }}</span>
-                        &nbsp;-&nbsp;
-                        <span class="dopa-think">{{ dopaHistory.thinkCount }}</span>
+                    ICON
                     </div>
                 </div>
             </ion-card-subtitle>
@@ -30,6 +28,19 @@ import { useAppStore } from '@/stores/app'
 const AppStore = useAppStore()
 const { dataReady, } = toRefs(SqliteStore)
 
+const formatDateTime = (dateTime:number) => {
+    const date = new Date(dateTime);
+    // 获取年、月、日、小时和分钟
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    // 格式化为  的字符串
+    const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+    return formattedDateTime;
+}
 </script>
 
 <style lang="less" scoped>

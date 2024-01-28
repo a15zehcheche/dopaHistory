@@ -169,7 +169,7 @@ class StorageService implements IStorageService {
         return (await this.db.query(sql)).values as HistoryComment[];
     }
     async addComment(newComment: HistoryComment): Promise<number> {
-        const sql = `INSERT INTO comment (id_history,content) VALUES (${newComment.id_history},"${newComment.content}");`;
+        const sql = `INSERT INTO comment (id_history,content,dateTime) VALUES (${newComment.id_history},"${newComment.content}","${newComment.dateTime}");`;
         console.log(sql)
         const res = await this.db.run(sql);
         if (res.changes !== undefined
@@ -181,9 +181,10 @@ class StorageService implements IStorageService {
     }
     async updateCommentById(historyComment: HistoryComment): Promise<void> {
         const sql = `UPDATE comment SET 
-        content="${historyComment.content}"
+        content="${historyComment.content}",
+        stars="${historyComment.stars}"
         WHERE id=${historyComment.id}`;
-        //console.log(sql)
+        console.log(sql)
         await this.db.run(sql);
     }
     async deleteCommentByHistoryId(id: string): Promise<void> {

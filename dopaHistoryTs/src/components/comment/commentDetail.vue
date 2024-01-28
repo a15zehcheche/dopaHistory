@@ -12,11 +12,9 @@
                 <!--ion-card-title>Card Title</ion-card-title-->
                 <ion-card-subtitle>
                     <div class="comment-box-info">
-                        <div>{{ history.dateTime }}</div>
+                        <div>{{ formatDateTime(comment.dateTime) }}</div>
                         <div>
-                            <span class="dopa-do">{{ history.doCount }}</span>
-                            &nbsp;-&nbsp;
-                            <span class="dopa-think">{{ history.thinkCount }}</span>
+                        icon
                         </div>
                     </div>
                 </ion-card-subtitle>
@@ -52,13 +50,19 @@ onMounted(async () => {
     console.log(route.params.id, comment.value, history.value)
     dataReady.value = true
 })
-/*
-watch(dataReady, (newIsHistory) => {
-  if (newIsHistory) {
-    console.log("Whatch check next day interval")
-    SqliteStore.checkIsPassNextDay()
-  }
-})*/
+const formatDateTime = (dateTime:number) => {
+    const date = new Date(dateTime);
+    // 获取年、月、日、小时和分钟
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    // 格式化为  的字符串
+    const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+    return formattedDateTime;
+}
 
 const actionSheetButtons = [
     {
