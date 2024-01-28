@@ -1,6 +1,6 @@
 export const UserUpgradeStatements = [
     {
-    toVersion: 1,
+    toVersion: 0,
     statements: [
         `CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,7 +20,7 @@ export const UserUpgradeStatements = [
     
     */
    {
-    toVersion: 2,
+    toVersion: 1,
     statements: [
         `CREATE TABLE "dopamine" (
             "id"	INTEGER UNIQUE,
