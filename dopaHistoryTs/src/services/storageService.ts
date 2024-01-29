@@ -196,6 +196,5 @@ class StorageService implements IStorageService {
         await this.db.run(sql);
     }
 
-
 }
 export default StorageService;
