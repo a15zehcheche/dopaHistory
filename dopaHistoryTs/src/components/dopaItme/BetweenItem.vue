@@ -1,8 +1,8 @@
 <template>
-    <div class="item-box">
+    <div class="item-box" @click="getComment()">
         <div class="item-layer cicle-layer">
             <div class="item-cicle-box">
-                <div class="item-cicle myShadow">
+                <div class="item-cicle myShadow" >
                     <!--{{ dopaHistory.id }}-->
                     <div><span class="dopa-think">{{ dopaHistory.thinkCount }}</span></div>
                     <div><span class="dopa-do">{{ dopaHistory.doCount }}</span></div>
@@ -25,6 +25,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 const props = defineProps(['dopaHistory'])
+import { useMySqliteStore } from '@/stores/sqlite'
+const SqliteStore = useMySqliteStore()
 
 const dateToString = computed(() => {
 
@@ -32,6 +34,9 @@ const dateToString = computed(() => {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 })
 
+const getComment = async()=>{
+    console.log(await SqliteStore.handleGetCommentByHistoryId(props.dopaHistory?.id))
+}
 
 </script>
 <style scoped>

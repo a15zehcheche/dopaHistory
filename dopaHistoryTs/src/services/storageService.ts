@@ -65,7 +65,7 @@ class StorageService implements IStorageService {
         }
     }
     async getUsers(): Promise<User[]> {
-        return (await this.db.query('SELECT * FROM users;')).values as User[];
+        return (await this.db.query('SELECT * FROM users WHERE sql_deleted == 0;')).values as User[];
     }
     async addUser(user: User): Promise<number> {
         const sql = `INSERT INTO users (name) VALUES (?);`;
@@ -87,7 +87,7 @@ class StorageService implements IStorageService {
     }
     //dopamine sql
     async getDopamine(): Promise<Dopamine[]> {
-        return (await this.db.query('SELECT * FROM dopamine;')).values as Dopamine[];
+        return (await this.db.query('SELECT * FROM dopamine WHERE sql_deleted == 0;')).values as Dopamine[];
     }
     async addDopamine(dopamine: Dopamine): Promise<number> {
         const sql = `INSERT INTO dopamine (name,startDate) VALUES (?,?);`;
@@ -120,11 +120,11 @@ class StorageService implements IStorageService {
 
     //history sql
     async getHistoryId(id: number): Promise<DopaHistory[]> {
-        const sql = `SELECT * FROM history WHERE id=${id}`;
+        const sql = `SELECT * FROM history WHERE id=${id} AND sql_deleted == 0`;
         return (await this.db.query(sql)).values as DopaHistory[];
     }
     async getHistoryByDopamineId(id: number): Promise<DopaHistory[]> {
-        const sql = `SELECT * FROM history WHERE id_dopamine=${id} ORDER by date(datetime) DESC`;
+        const sql = `SELECT * FROM history WHERE id_dopamine=${id} ORDER by date(datetime) DESC AND sql_deleted == 0`;
         return (await this.db.query(sql)).values as DopaHistory[];
     }
 
@@ -165,7 +165,7 @@ class StorageService implements IStorageService {
 
     //comment sql
     async getCommentByHistoryId(id: number): Promise<HistoryComment[]> {
-        const sql = `SELECT * FROM comment WHERE id_history=${id}`;
+        const sql = `SELECT * FROM comment WHERE id_history=${id} AND sql_deleted == 0`;
         return (await this.db.query(sql)).values as HistoryComment[];
     }
     async addComment(newComment: HistoryComment): Promise<number> {
@@ -182,7 +182,7 @@ class StorageService implements IStorageService {
     async updateCommentById(historyComment: HistoryComment): Promise<void> {
         const sql = `UPDATE comment SET 
         content="${historyComment.content}",
-        stars="${historyComment.stars}"
+        stars=${historyComment.stars}
         WHERE id=${historyComment.id}`;
         console.log(sql)
         await this.db.run(sql);
@@ -193,6 +193,7 @@ class StorageService implements IStorageService {
     }
     async deleteCommentById(id: string): Promise<void> {
         const sql = `DELETE FROM comment WHERE id=${id}`;
+        console.log(sql)
         await this.db.run(sql);
     }
 

@@ -52,7 +52,7 @@ export const UserUpgradeStatements = [
             "id" INTEGER PRIMARY KEY AUTOINCREMENT,
             "id_history" INTEGER,
             "content" TEXT,
-            "stars" BOOLEAN DEFAULT 'False',
+            "stars" BOOLEAN DEFAULT false,
             "dateTime" INTEGER,
             "sql_deleted" BOOLEAN DEFAULT 0 CHECK (sql_deleted IN (0, 1)),
             "last_modified" INTEGER DEFAULT 0,

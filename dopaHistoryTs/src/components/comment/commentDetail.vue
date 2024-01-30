@@ -2,10 +2,11 @@
     <ChildBaseLayout page-title="详情">
         <template v-slot:actions-end> <ion-icon id="open-action-sheet" size="small"
                 icon="assets/menu-dots.svg"></ion-icon></template>
-        <ion-action-sheet trigger="open-action-sheet" header="操作" :buttons="actionSheetButtons"></ion-action-sheet>
+        <ion-action-sheet trigger="open-action-sheet" header="操作" :buttons="actionSheetButtons"
+            @didDismiss="logResult($event)"></ion-action-sheet>
         <ion-card color="light" v-if="dataReady">
             <ion-card-content :id="'comentLaber' + comment.id" contenteditable="true" class="laber"
-                    @blur="updateDopaName($event, comment)">
+                @blur="updateDopaName($event, comment)">
                 {{ comment.content }}
             </ion-card-content>
             <ion-card-header>
@@ -13,9 +14,8 @@
                 <ion-card-subtitle>
                     <div class="comment-box-info">
                         <div>{{ formatDateTime(comment.dateTime) }}</div>
-                        <div>
-                        icon
-                        </div>
+                        <ion-icon v-if="comment.stars" size="small" icon="assets/star.svg" color="warning"></ion-icon>
+
                     </div>
                 </ion-card-subtitle>
             </ion-card-header>
@@ -50,7 +50,7 @@ onMounted(async () => {
     console.log(route.params.id, comment.value, history.value)
     dataReady.value = true
 })
-const formatDateTime = (dateTime:number) => {
+const formatDateTime = (dateTime: number) => {
     const date = new Date(dateTime);
     // 获取年、月、日、小时和分钟
     const year = date.getFullYear();
@@ -58,7 +58,7 @@ const formatDateTime = (dateTime:number) => {
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    
+
     // 格式化为  的字符串
     const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
     return formattedDateTime;
@@ -71,11 +71,13 @@ const actionSheetButtons = [
         data: {
             action: 'delete',
         },
-        handler: () => {
-            console.log('delete');
-            deleteCommet()
-            router.back()
-        },
+    },
+    {
+        text: '收藏',
+        role: 'favorite',
+        data: {
+            action: 'favorite',
+        }
     },
     {
         text: '取消',
@@ -85,9 +87,31 @@ const actionSheetButtons = [
         },
     },
 ];
+const logResult = async (ev: CustomEvent) => {
+    console.log(JSON.stringify(ev.detail, null, 2));
+    switch (ev.detail.role) {
+        case 'destructive':
+            console.log('delete');
+            await deleteCommet()
+            router.back()
+            break;
+        case 'favorite':
+            console.log('favorite');
+            await starCommet()
+            break;
+        case 'backdrop':
+            break;
+    }
+};
 
 const deleteCommet = () => {
     SqliteStore.handleDeleteCommentById(comment.value.id)
+
+}
+
+const starCommet = async () => {
+    comment.value.stars = !comment.value.stars
+    await SqliteStore.handleUpdatComment(comment.value)
 
 }
 
@@ -107,7 +131,7 @@ const updateDopaName = async (event: Event, comment: HistoryComment) => {
             position: 'top',
         });
         await toast.present();
-    } 
+    }
 }
 
 

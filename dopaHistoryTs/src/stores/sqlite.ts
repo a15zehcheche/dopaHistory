@@ -98,7 +98,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   const selectedDopaCaseSegment = ref<any>(null);
 
   const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
-    const stmt = 'SELECT * FROM dopamine';
+    const stmt = 'SELECT * FROM dopamine WHERE sql_deleted ==0';
     const values: any[] = [];
     const fetchData = await useQuerySQLite(db, stmt, values);
     dopamines.value = fetchData;
@@ -130,7 +130,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   }
   const getHistoryByDopamineId = async (dopamineId: number) => {
     console.log('4 - get Dopa history by id :' + dopamineId)
-    const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
+    const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId} AND sql_deleted ==0`;
     const values: any[] = [];
     const fetchData = await useQuerySQLite(db, stmt, values);
     dopaCaseActive!.value!.dopaHistorys = fetchData.reverse() as DopaHistory[]
@@ -318,7 +318,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   //testData check
   const getHistory = async (dopamineId: number) => {
     console.log('4 - get Dopa history by id :' + dopamineId)
-    const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId}`;
+    const stmt = `SELECT * FROM history WHERE id_dopamine=${dopamineId} AND sql_deleted ==0`;
     const values: any[] = [];
     const fetchData = await useQuerySQLite(db, stmt, values);
     console.log(fetchData)
@@ -513,7 +513,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     console.log(dopaCaseActive.value!.dopaHistorys![historyIndex].comments)
   }
   const getCommentById = async (commentId: Number): Promise<DopaHistory[]> => {
-    const stmt = `SELECT * FROM comment WHERE id=${commentId}`;
+    const stmt = `SELECT * FROM comment WHERE id=${commentId} AND sql_deleted ==0`;
     const values: any[] = [];
     const fetchData = await useQuerySQLite(db, stmt, values);
     return fetchData as DopaHistory[];
