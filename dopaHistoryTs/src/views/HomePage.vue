@@ -4,7 +4,7 @@
       <app-date-time :dateToday="SqliteStore.dateToday"></app-date-time>
       <dopa-bar-main></dopa-bar-main>
       <dopa-case v-if="SqliteStore.dopaCaseActive" :dopamine="SqliteStore.dopaCaseActive"></dopa-case>
-      <comment-box v-if="dataReady" :dopaHistory="SqliteStore.historyActive"></comment-box>
+      <comment-box v-if="dataReady" :comments="SqliteStore.historyActive!.comments"></comment-box>
       <div class="action-btn-box">
         <action-fab :class="[{ 'hide': mainScrollTop},{ 'none': mainScrollTop>15}]"></action-fab>
       </div>

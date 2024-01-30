@@ -1,5 +1,5 @@
 <template>
-    <ion-card color="light" v-for=" comment in dopaHistory.comments" :router-link="`/comment/detail/${comment.id}`">
+    <ion-card color="light" v-for=" comment in comments" :router-link="`/comment/detail/${comment.id}`">
         <ion-card-content>
             {{ comment.content }}
         </ion-card-content>
@@ -19,7 +19,7 @@
 import { defineProps, toRefs, watch } from 'vue'
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonIcon } from '@ionic/vue';
 
-const props = defineProps(['dopaHistory'])
+const props = defineProps(['comments'])
 import { useMySqliteStore } from '@/stores/sqlite'
 const SqliteStore = useMySqliteStore()
 import { useAppStore } from '@/stores/app'

@@ -7,7 +7,7 @@
             <span class="info">没有记录。。。</span>
         </div>
         <comment-box v-for="dopahistory in SqliteStore.dopaCaseActive?.dopaHistorys"
-            :dopaHistory="dopahistory"></comment-box>
+            :comments="dopahistory.comments"></comment-box>
     </base-layout>
 </template>
 <script lang="ts" setup>

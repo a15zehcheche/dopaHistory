@@ -42,6 +42,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/user/DopaCasePage.vue'),
   },
   {
+    path: '/favorite',
+    name: 'favorite',
+    component: () => import('@/views/user/FavoritePage.vue'),
+  },
+  {
     path: '/comment/detail/:id',
     name: 'CommentDetail',
     component: () => import('@/components/comment/commentDetail.vue'),

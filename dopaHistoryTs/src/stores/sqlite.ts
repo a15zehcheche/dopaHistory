@@ -512,11 +512,17 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     dopaCaseActive.value!.dopaHistorys![historyIndex].comments = comments
     console.log(dopaCaseActive.value!.dopaHistorys![historyIndex].comments)
   }
-  const getCommentById = async (commentId: Number): Promise<DopaHistory[]> => {
-    const stmt = `SELECT * FROM comment WHERE id=${commentId} AND sql_deleted ==0`;
+  const getCommentById = async (commentId: Number): Promise<HistoryComment[]> => {
+    const stmt = `SELECT * FROM comment WHERE id=${commentId} AND sql_deleted == 0`;
     const values: any[] = [];
     const fetchData = await useQuerySQLite(db, stmt, values);
-    return fetchData as DopaHistory[];
+    return fetchData as HistoryComment[];
+  }
+  const getAllFavoriteComment = async (): Promise<HistoryComment[]> => {
+    const stmt = `SELECT * FROM comment WHERE stars == true AND sql_deleted == 0`;
+    const values: any[] = [];
+    const fetchData = await useQuerySQLite(db, stmt, values);
+    return fetchData as HistoryComment[];
   }
 
   return {
@@ -524,7 +530,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     initConnection, ClearConnection,
     getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine, handleUpdateDopamine,
     handleGetCommentByHistoryId, handleAddHistoryCommnet, handleGetHistoryId, handleDeleteCommentById,
-    handleUpdatComment,
+    handleUpdatComment,getAllFavoriteComment,
     dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday, getComment, getCommentById
   }
 
