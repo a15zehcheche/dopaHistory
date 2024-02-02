@@ -34,7 +34,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/setting',
     name: 'setting',
     component: () => import('@/views/user/SettingPage.vue'),
-
+  },
+  {
+    path: '/dataBackup',
+    name: 'dataBackup',
+    component: () => import('@/views/user/DataBackupPage.vue'),
   },
   {
     path: '/dopaCase',

@@ -10,6 +10,11 @@
             <ion-label class="laber">收藏</ion-label>
             <ion-icon aria-hidden="true" size="small" icon="assets/angle-right.svg" />
         </ion-item>
+        <ion-item class="list-item" :router-link="`/dataBackup`">
+            <ion-icon aria-hidden="true" size="small" icon="assets/database.svg" />
+            <ion-label class="laber">数据管理</ion-label>
+            <ion-icon aria-hidden="true" size="small" icon="assets/angle-right.svg" />
+        </ion-item>
         <ion-item class="list-item" :router-link="`/setting`">
             <ion-icon aria-hidden="true" size="small" icon="assets/settings.svg" />
             <ion-label class="laber">设置</ion-label>
