@@ -38,6 +38,8 @@ import { OverlayEventDetail } from '@ionic/core/components';
 import { ref } from 'vue';
 import { useMySqliteStore } from '@/stores/sqlite'
 import { star } from 'ionicons/icons';
+import { nanoid } from 'nanoid'
+
 const SqliteStore = useMySqliteStore()
 
 const modal = ref();
@@ -62,7 +64,7 @@ const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
 
 const addComment = async (content: string) => {
     let newComment = {
-        id: new Date().getTime(),
+        id: nanoid(),
         id_history: SqliteStore.historyActive?.id!,
         content: content,
         stars: false,

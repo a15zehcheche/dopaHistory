@@ -25,7 +25,7 @@ export const UserUpgradeStatements = [
     toVersion: 2,
     statements: [
         `CREATE TABLE "dopamine" (
-            "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+            "id" TEXT PRIMARY KEY,
             "name" TEXT,
             "recordBestThinkDay" INTEGER DEFAULT 0,
             "recordBestDoDay" INTEGER DEFAULT 0,
@@ -37,8 +37,8 @@ export const UserUpgradeStatements = [
             "last_modified" INTEGER DEFAULT 0
         );`,
         `CREATE TABLE "history" (
-            "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-            "id_dopamine" INTEGER NOT NULL,
+            "id" TEXT PRIMARY KEY,
+            "id_dopamine" TEXT NOT NULL,
             "dateTime" TEXT,
             "lastDoDay" INTEGER DEFAULT 0,
             "lastThinkDay" INTEGER DEFAULT 0,
@@ -49,8 +49,8 @@ export const UserUpgradeStatements = [
             FOREIGN KEY("id_dopamine") REFERENCES "dopamine"("id")
         );`,
         `CREATE TABLE "comment" (
-            "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-            "id_history" INTEGER,
+            "id" TEXT PRIMARY KEY,
+            "id_history" TEXT,
             "content" TEXT,
             "stars" BOOLEAN DEFAULT false,
             "dateTime" INTEGER,

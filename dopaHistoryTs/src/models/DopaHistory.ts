@@ -1,7 +1,7 @@
 import {HistoryComment} from './HistoryComment'
 export interface DopaHistory {
-    id: number
-    id_dopamine: number
+    id: string
+    id_dopamine: string
     dateTime: string
     lastDoDay: number
     lastThinkDay: number

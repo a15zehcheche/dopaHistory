@@ -1,6 +1,6 @@
 <template>
     <ion-segment :scrollable="true" value="heart" v-model="SqliteStore.selectedDopaCaseSegment" @ionChange="handleSegmentChange">
-        <ion-segment-button v-for="dopamine in SqliteStore.dopamines" :value="'d' + dopamine.id" @click="setSelectDopaCaseId(dopamine.id)">
+        <ion-segment-button v-for="dopamine in SqliteStore.dopamines" :value="dopamine.id" @click="setSelectDopaCaseId(dopamine.id)">
             <ion-label>{{ dopamine.name }}</ion-label>
         </ion-segment-button>
     </ion-segment>
@@ -22,7 +22,9 @@ const handleSegmentChange = (event: any) => {
     localStorage.setItem("selectedDopaCaseSegment", event.detail.value);
     //console.log('Selected segment:', event.detail.value);
 }
-const setSelectDopaCaseId =(dopaId:number)=>{
+const setSelectDopaCaseId =(dopaId:string)=>{
+    console.log('dopaid:',SqliteStore.dopamines );
+    
     SqliteStore.setDopaCaseActive(dopaId)
 }
 

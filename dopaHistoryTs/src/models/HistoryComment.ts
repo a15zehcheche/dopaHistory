@@ -1,6 +1,6 @@
 export interface HistoryComment {
-    id: number
-    id_history: number
+    id: string
+    id_history: string
     content: string
     stars: boolean
     dateTime: number

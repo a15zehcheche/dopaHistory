@@ -1,6 +1,6 @@
 import { DopaHistory } from "./DopaHistory"
 export interface Dopamine {
-    id: number
+    id: string
     name: string
     recordBestThinkDay: number
     recordBestDoDay: number
