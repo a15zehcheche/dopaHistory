@@ -15,7 +15,7 @@
             <ion-label class="laber">数据管理</ion-label>
             <ion-icon aria-hidden="true" size="small" icon="assets/angle-right.svg" />
         </ion-item>
-        <ion-item class="list-item" :router-link="`/setting`">
+        <ion-item v-if="0" class="list-item" :router-link="`/setting`">
             <ion-icon aria-hidden="true" size="small" icon="assets/settings.svg" />
             <ion-label class="laber">设置</ion-label>
             <ion-icon aria-hidden="true" size="small" icon="assets/angle-right.svg" />

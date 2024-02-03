@@ -8,7 +8,8 @@ import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { Dopamine } from '@/models/Dopamine';
 import { DopaHistory } from '@/models/DopaHistory'
 import { HistoryComment } from '@/models/HistoryComment';
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
+import BackupController, { IBackupController } from '@/controllers/BackupController';
 
 export const useCounterStore = defineStore('Counter', () => {
   const count = ref(0)
@@ -98,7 +99,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
   const dateToday = ref<Date>(new Date());
   const selectedDopaCaseSegment = ref<any>(null);
 
-  const getAllDopamine = async (db: Ref<SQLiteDBConnection | null>) => {
+  const getAllDopamine = async () => {
     const stmt = 'SELECT * FROM dopamine WHERE sql_deleted == 0';
     const values: any[] = [];
     const fetchData = await useQuerySQLite(db, stmt, values);
@@ -118,7 +119,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
         dopaHistorys: []
       };
       await handleAddDopamine(newDapamine)
-      await getAllDopamine(db)
+      await getAllDopamine()
     } else {
       console.log("3 - dopamine set dopaCaseActive")
       selectedDopaCaseSegment.value = selectedDopaCaseSegment.value ? selectedDopaCaseSegment.value : dopamines.value[0].id
@@ -171,7 +172,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
       selectedDopaCaseSegment.value = localStorage.getItem("selectedDopaCaseSegment")
       //if (selectedDopaCaseSegment.value == null) localStorage.setItem("selectedDopaCaseSegment", "d1");
 
-      getAllDopamine(db).then(() => {
+      getAllDopamine().then(() => {
 
 
       }).catch((error: any) => {
@@ -527,13 +528,19 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     return fetchData as HistoryComment[];
   }
 
+  const backupController = async (): Promise<BackupController> => {
+    let controlle = new BackupController()
+    controlle.db(db.value)
+    return controlle
+  }
   return {
     dateToday, dopamines, dataReady, dopaCaseActive, selectedDopaCaseSegment, historyActive,
     initConnection, ClearConnection,
     getAllDopamine, handleAddDopamine, setDopaCaseActive, handleDeleteDopamine, handleUpdateDopamine,
     handleGetCommentByHistoryId, handleAddHistoryCommnet, handleGetHistoryId, handleDeleteCommentById,
     handleUpdatComment, getAllFavoriteComment,
-    dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday, getComment, getCommentById
+    dopaDo, dopaThink, checkIsPassNextDay, getHistory, passNextday, getComment, getCommentById,
+    backupController
   }
 
 })

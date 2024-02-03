@@ -16,22 +16,40 @@
                 </ion-card-header>
                 <ion-card-content>
                     <input type="file" ref="file" accept="" v-on:change="emitFileChange" v-show="true" />
-                    <pre v-if="false">{{ pretty( importJsonFile) }}</pre>
+                    <pre v-if="false">{{ pretty(importJsonFile) }}</pre>
                 </ion-card-content>
             </ion-card>
-
+            <ion-card v-if="dataBackup.dopamines.length">
+                <ion-list :inset="true">
+                    <ion-item>
+                        <ion-label>案例</ion-label>
+                        <ion-note slot="end">{{ dataBackup.dopamines.length }}</ion-note>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>记录</ion-label>
+                        <ion-note slot="end">{{ dataBackup.historys.length }}</ion-note>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>评论</ion-label>
+                        <ion-note slot="end">{{ dataBackup.commets.length }}</ion-note>
+                    </ion-item>
+                </ion-list>
+            </ion-card>
         </div>
     </ChildBaseLayout>
 </template>
   
 <script lang="ts" setup>
 import ChildBaseLayout from '@/components/app/ChildBaseLayout.vue';
-import { IonButton, toastController, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/vue';
+import {
+    IonButton, toastController, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonItem,
+    IonLabel, IonNote, IonList,
+} from '@ionic/vue';
 
 
 import { Plugins, Capacitor, } from '@capacitor/core';
 import { Filesystem, FilesystemDirectory, FilesystemEncoding } from '@capacitor/filesystem'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 const props = defineProps(['pageDefaultBackLink'])
 const { CapacitorSQLite } = Plugins;
 
@@ -41,7 +59,7 @@ import { HistoryComment } from '@/models/HistoryComment';
 const SqliteStore = useMySqliteStore()
 
 const selectedFolder = ref()
-const importJsonFile = ref()
+
 async function openFolderChooser() {
 
     if (Capacitor.isPluginAvailable('Filesystem')) {
@@ -111,13 +129,14 @@ const pretty = (value: JSON) => {
     return JSON.stringify(value, null, 2);
 }
 
-onMounted(() => {
-    exportToJson()
+onMounted(async () => {
+    await (await SqliteStore.backupController()).getDopamine('s')
+    //exportToJson()
 })
+
 const file = ref(null)
-const FileName = ref(null)
 
-
+const importJsonFile = ref()
 const emitFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
     importJsonFile.value = ''
@@ -139,46 +158,65 @@ const emitFileChange = (event: Event) => {
     }
 };
 
-
+const dataBackup = ref({
+    dopamines: [],
+    historys: [],
+    commets: []
+})
 const restoreBackup = async () => {
-    if (importJsonFile.value) {
-        let backupJson = JSON.parse(importJsonFile.value)
-        console.log(backupJson)
-        if (backupJson.export.tables) {
-            let dataTables = backupJson.export.tables
-            if (Array.isArray(dataTables)) {
-                dataTables.forEach((table: JSON) => {
-                    //console.log(table)
-                    checkData(table)
-                });
-            }
-
-        }
-    } else {
-        presentToast('请选择倒入的json文件')
+    if (dataBackup.value.dopamines.length)
+        await (await SqliteStore.backupController()).restoreDopamine(dataBackup.value.dopamines)
+    if (dataBackup.value.historys.length)
+        await (await SqliteStore.backupController()).restoreHistory(dataBackup.value.historys)
+    if (dataBackup.value.commets.length)
+        await (await SqliteStore.backupController()).restoreComment(dataBackup.value.commets)
+    await SqliteStore.getAllDopamine()
+    presentToast('数据导入成功')
+    dataBackup.value = {
+        dopamines: [],
+        historys: [],
+        commets: []
     }
 }
 
-
-let dopamines: Dopamine[] = []
-let historys: History[] = []
-let commets: HistoryComment[] = []
-const checkData = (data: any) => {
-    switch (data.name) {
+const checkData = async (table: any) => {
+    switch (table.name) {
         case 'dopamine':
-            console.log(data.values)
+            if (table.values)
+                dataBackup.value.dopamines = table.values
             break;
         case 'history':
-            console.log(data.values)
+            if (table.values)
+                dataBackup.value.historys = table.values
             break;
         case 'comment':
-            console.log(data.values)
+            if (table.values)
+                dataBackup.value.commets = table.values
             break;
-
     }
 
 }
 
+watch(importJsonFile, (newJsonFile) => {
+    if (newJsonFile) {
+        if (importJsonFile.value) {
+            let backupJson = JSON.parse(importJsonFile.value)
+            console.log(backupJson)
+            if (backupJson.export.tables) {
+                let dataTables = backupJson.export.tables
+                if (Array.isArray(dataTables)) {
+                    dataTables.forEach((table: JSON) => {
+                        //console.log(table)
+                        checkData(table)
+                    });
+                }
+
+            }
+        } else {
+            presentToast('请选择倒入的json文件')
+        }
+    }
+})
 
 </script>
 
