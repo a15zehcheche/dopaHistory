@@ -18,8 +18,12 @@ import { useAppStore } from '@/stores/app'
 import { thumbsUp } from 'ionicons/icons';
 const AppStore = useAppStore()
 
-
-
+const convertToTwoDigit = (number: number) => {
+    return number < 10 ? '0' + number.toString() : number.toString();
+}
+const dateToString = (date: Date) => {
+    return `${date.getFullYear()}-${convertToTwoDigit(date.getMonth() + 1)}-${convertToTwoDigit(date.getDate())}`
+}
 const calNextDate = (actualDate: Date) => {
     let nextDay = new Date(actualDate.getTime())
     nextDay.setDate(actualDate.getDate() + 1)
@@ -54,6 +58,7 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
     //console.log(dopaCaseActiveF)
     let dateInit = new Date(dopaCaseActiveF.startDate!)
     let dateFin = new Date(dopaCaseActiveF.dopaHistorys![0].dateTime)
+    //console.log(dateToString(dateInit), dateToString(dateFin))
     //把起始日期设置到1号，把最后history的日期设置成年的最后一天
     dateInit.setDate(1)
     dateFin.setMonth(11)
@@ -89,41 +94,41 @@ const buildWeekList = (dopaCaseActiveF: Dopamine) => {
         let tepmDays: day[] = [];
         let monthNumber = -1;
         for (let i = 0; i < 7; i++) {
+            //设置每个月的第一个星期
             if (dateInit.getDate() == 1) monthNumber = dateInit.getMonth()
 
-            //把数据放上去
+            //创建数据放上去
             let frequencyCount = {
                 do: 0,
                 think: 0
             }
             //检查开始日期
-            if (historyQueue!.length > actualQueueIndex && dateInit.getTime() == new Date(dopaCaseActiveF.startDate).getTime()) {
+            if (historyQueue!.length > actualQueueIndex && new Date(dateToString(dateInit)).getTime() == new Date(dopaCaseActiveF.startDate).getTime()) {
                 BetweenDayStart = true
             }
 
-            //匹配日期
-            if (historyQueue!.length > actualQueueIndex && dateInit.getTime() == new Date(historyQueue![actualQueueIndex].dateTime).getTime()
+            //匹配日期           
+            if (actualQueueIndex < historyQueue!.length && new Date(dateToString(dateInit)).getTime() == new Date(historyQueue![actualQueueIndex].dateTime).getTime()
             ) {
+                //console.log(dateToString(new Date(dateToString(dateInit))), dateToString(new Date(historyQueue![actualQueueIndex].dateTime)))
                 frequencyCount.do = historyQueue![actualQueueIndex].doCount
                 frequencyCount.think = historyQueue![actualQueueIndex].thinkCount
                 actualQueueIndex++
                 //console.log('push data', frequencyCount)
-                myBetweenDay = true
+
             } else {
                 //激活已经过的天
                 //要是已经开始，和还没到结尾
                 if (BetweenDayStart) {
                     if (actualQueueIndex == historyQueue!.length) {
-                        myBetweenDay = false
-                    } else {
-                        myBetweenDay = true
+                        BetweenDayStart = false
                     }
                 }
             }
             tepmDays.push({
                 date: dateInit,
                 count: frequencyCount,
-                betweenDay: myBetweenDay
+                betweenDay: BetweenDayStart
             })
             dateInit = calNextDate(dateInit)
             //console.log(i)
