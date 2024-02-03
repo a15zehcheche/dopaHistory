@@ -80,6 +80,7 @@ async function openFolderChooser() {
 
 async function writeFile() {
     try {
+        await exportToJson()
         const fileName = 'data.json';
         const content = exportJsonFull.value
         const directory = FilesystemDirectory.Documents;
@@ -123,7 +124,7 @@ async function exportToJson() {
         jsonexportpath: 'path_to_export.json'
     });
     exportJsonFull.value = JSON.stringify(result)
-    console.log('Export result:', result);
+    //console.log('Export result:', result);
 }
 const pretty = (value: JSON) => {
     return JSON.stringify(value, null, 2);
