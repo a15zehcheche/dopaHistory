@@ -15,7 +15,7 @@
                     <ion-button @click="restoreBackup">倒入数据</ion-button>
                 </ion-card-header>
                 <ion-card-content>
-                    <input type="file" ref="file" accept="" v-on:change="emitFileChange" v-show="true" />
+                    <input type="file" accept="" v-on:change="emitFileChange" ref="jsonFileInput" v-show="true" />
                     <pre v-if="false">{{ pretty(importJsonFile) }}</pre>
                 </ion-card-content>
             </ion-card>
@@ -163,19 +163,24 @@ const dataBackup = ref({
     historys: [],
     commets: []
 })
+const jsonFileInput = ref()
 const restoreBackup = async () => {
-    if (dataBackup.value.dopamines.length)
-        await (await SqliteStore.backupController()).restoreDopamine(dataBackup.value.dopamines)
-    if (dataBackup.value.historys.length)
-        await (await SqliteStore.backupController()).restoreHistory(dataBackup.value.historys)
-    if (dataBackup.value.commets.length)
-        await (await SqliteStore.backupController()).restoreComment(dataBackup.value.commets)
-    await SqliteStore.getAllDopamine()
-    presentToast('数据导入成功')
-    dataBackup.value = {
-        dopamines: [],
-        historys: [],
-        commets: []
+    if (dataBackup.value.dopamines.length) {
+        if (dataBackup.value.dopamines.length)
+            await (await SqliteStore.backupController()).restoreDopamine(dataBackup.value.dopamines)
+        if (dataBackup.value.historys.length)
+            await (await SqliteStore.backupController()).restoreHistory(dataBackup.value.historys)
+        if (dataBackup.value.commets.length)
+            await (await SqliteStore.backupController()).restoreComment(dataBackup.value.commets)
+        await SqliteStore.getAllDopamine()
+        presentToast('数据导入成功')
+        dataBackup.value = {
+            dopamines: [],
+            historys: [],
+            commets: []
+        }
+    } else {
+        presentToast('请选择倒入的json文件')
     }
 }
 
@@ -199,23 +204,21 @@ const checkData = async (table: any) => {
 
 watch(importJsonFile, (newJsonFile) => {
     if (newJsonFile) {
-        if (importJsonFile.value) {
-            let backupJson = JSON.parse(importJsonFile.value)
-            console.log(backupJson)
-            if (backupJson.export.tables) {
-                let dataTables = backupJson.export.tables
-                if (Array.isArray(dataTables)) {
-                    dataTables.forEach((table: JSON) => {
-                        //console.log(table)
-                        checkData(table)
-                    });
-                }
-
+        //console.log(jsonFileInput.value)
+        let backupJson = JSON.parse(importJsonFile.value)
+        console.log(backupJson)
+        if (backupJson.export.tables) {
+            let dataTables = backupJson.export.tables
+            if (Array.isArray(dataTables)) {
+                dataTables.forEach((table: JSON) => {
+                    //console.log(table)
+                    checkData(table)
+                });
             }
-        } else {
-            presentToast('请选择倒入的json文件')
+
         }
     }
+
 })
 
 </script>
