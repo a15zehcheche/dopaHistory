@@ -227,7 +227,7 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
     if (dopaHistory.lastThinkDay > dopaCaseActive?.value!.recordBestThinkDay!) {
       dopaCaseActive!.value!.recordBestThinkDay = dopaHistory.lastThinkDay
     }
-    //-await handleUpdateDopamine(dopaCaseActive!.value!)
+    await handleUpdateDopamine(dopaCaseActive!.value!)
   }
 
 

@@ -105,7 +105,7 @@ class StorageService implements IStorageService {
         const sql = `UPDATE dopamine SET
         name="${dopamine.name}",
         recordBestThinkDay="${dopamine.recordBestThinkDay}",
-        recordBestDoDay="${dopamine.recordBestThinkDay}",
+        recordBestDoDay="${dopamine.recordBestDoDay}",
         allDoDayCount="${dopamine.allDoDayCount}",
         allThinkDayCount="${dopamine.allThinkDayCount}",
         daysCount="${dopamine.daysCount}",
