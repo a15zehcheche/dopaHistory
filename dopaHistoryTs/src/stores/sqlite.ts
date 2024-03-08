@@ -92,11 +92,11 @@ export const useMySqliteStore = defineStore('mySqlite', () => {
 
   //my app variables
 
+  const dateToday = ref<Date>(new Date());
+  const dopamines = ref<Dopamine[]>([]);
   const dopaCaseActive = ref<Dopamine>();
   const dataReady = ref(false);
-  const dopamines = ref<Dopamine[]>([]);
-  let historyActive = ref<DopaHistory>();
-  const dateToday = ref<Date>(new Date());
+  const historyActive = ref<DopaHistory>();
   const selectedDopaCaseSegment = ref<any>(null);
 
   const getAllDopamine = async () => {

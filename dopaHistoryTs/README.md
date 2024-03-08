@@ -4,6 +4,8 @@
 ```npm i```
 ## build project to production
 ```npm rnu build```
+## run Locally in a Web Browser
+```ionic serve```
 ## run app to device
 ```
 npx capacitor copy android

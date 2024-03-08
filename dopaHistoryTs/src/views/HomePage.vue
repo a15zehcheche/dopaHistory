@@ -83,12 +83,12 @@ const passNextday = () => {
 
 }
 
-watch(dataReady, (newIsHistory) => {
-  if (newIsHistory) {
-    console.log("Whatch check next day interval")
-    SqliteStore.checkIsPassNextDay()
-  }
-})
+// watch(dataReady, (newIsHistory) => {
+//   if (newIsHistory) {
+//     console.log("Whatch check next day interval")
+//     SqliteStore.checkIsPassNextDay()
+//   }
+// })
 
 const handleScroll = (event: Event) => {
   // 获取滚动位置
